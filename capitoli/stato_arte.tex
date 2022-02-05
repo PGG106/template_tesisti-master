@@ -1,4 +1,4 @@
-\chapter{Stato dell'arte} %\label{1cap:spinta_laterale}
+\chapter{Stato dell'arte per Algoritmi di intelligenza artificiale e motori scacchistici  per il gioco degli scacchi} %\label{1cap:spinta_laterale}
 % [titolo ridotto se non ci dovesse stare] {titolo completo}
 %
 
@@ -8,16 +8,84 @@ Questo capitolo illustra lo stato dell'arte e i lavori presenti in letteratura s
 
 \newpage
 
-\section{Il gioco degli scacchi} %\label{1sec:scopo}
-Gli scacchi sono un gioco di strategia deterministico a somma zero e ad informazione completa  
-che si svolge su una tavola quadrata formata da 64 caselle ,di due colori alternati,
-detta scacchiera sulla quale ogni giocatore contraddistinto da uno di due colori
-nero o bianco, dispone di 16 pezzi:un re, regina, due alfieri, due cavalli, due torri e otto pedoni.
-obiettivo del gioco è dare scacco matto, ovvero minacciare la cattura del re avversario mentre esso non
-ha modo di rimuovere il re dalla sua posizione di pericolo alla sua prossima semimossa.
-Ulteriori informazioni verranno fornite nei successivi capitoli quando maggiori conoscenze di teoria 
-si riveleranno necessarie per poter procedere allo sviluppo del motore.
-   
+
+
+\section{Pre Neural Network Stockfish}
+
+\subsection*{}
+\subsection{Board Representation}
+8x8 Board
+Bitboards with Little-Endian Rank-File Mapping (LERF)
+Magic Bitboards
+BMI2 - PEXT Bitboards (not recommend for AMD Ryzen [28] prior to Zen 3)
+
+\subsection{Search}
+Iterative Deepening
+Aspiration Windows
+Parallel Search using Threads
+YBWC prior to Stockfish 7
+Lazy SMP since Stockfish 7, January 2016
+Principal Variation Search
+Transposition Table
+Shared Hash Table
+10 Bytes per Entry, 3 Entries per Cluster
+Depth-preferred Replacement Strategy
+No PV-Node probing
+Prefetch
+Move Ordering
+Countermove Heuristic
+Counter Moves History since Stockfish 7, January 2016 [32]
+History Heuristic
+Internal Iterative Deepening
+Killer Heuristic
+MVV/LVA
+SEE
+Selectivity
+Extensions
+Check Extensions if SEE >= 0
+Restricted Singular Extensions
+Pruning
+Futility Pruning
+Move Count Based Pruning
+Null Move Pruning
+Dynamic Depth Reduction based on depth and value
+Static Null Move Pruning
+Verification search at high depths
+ProbCut
+SEE Pruning
+Reductions
+Late Move Reductions
+Razoring
+Quiescence Search
+
+
+\subsection{Evaluation} \setcounter{secnumdepth}{3}
+
+\subsubsection{Material} \noindent 
+Bishop Pair
+Imbalance Tables
+Material Hash Table
+\subsubsection{Mobility} \noindent 
+Trapped Pieces
+Rooks on (Semi) Open Files
+\subsubsection{Pawn Structure} \noindent 
+Pawn Hash Table \\
+Backward Pawn\\
+Doubled Pawn\\
+Isolated Pawn\\
+Phalanx\\
+Connected Pawns\\
+Passed Pawn
+\subsubsection*{King Safety}
+Attacking King Zone
+Pawn Shelter
+Pawn Storm
+Square Control
+\subsubsection*{Tapered Eval}
+\subsubsection*{Evaluation Patterns}
+\subsubsection*{Piece-Square Tables}
+\subsubsection*{Space}
+\subsubsection*{Outposts}
 
 
 
@@ -25,4 +93,22 @@ si riveleranno necessarie per poter procedere allo sviluppo del motore.
 
 
 
-\section{Algoritmi di intelligenza artificiale e motori scacchistici  per il gioco degli scacchi}
+
+
+\section{Google AlphaZero}
+
+
+
+\section{Post Neural Networ Stockfish-NNUE e LCZero}
+Nonostante le critiche ed i dubbi sulla performance di AlphaZero, gli appassionati di scacchi
+computazionali non rimasero impassibili davanti ai meriti di un approccio orientato alle reti
+neurali,il 6 agosto del 2020, un anno e mezzo dopo la pubblicazione definitiva dell'articolo su
+AlphaZero da parte di DeepMind e dopo un anno di lavoro, viene ufficialmente introdotta 
+,all'interno della repo di Stockfish,NNUE.
+ NNUE, acronimo di "Effeciently Upgradable Neural Network" scritto da sinistra a destra,
+è una rete neurale per la valutazione di posizioni shogi, alle quali assegna un punteggio
+utilizzato poi in fase di potatura,adattata per operare sugli scacchi ed essere integrata in 
+Stockfish.
+In questa versione Stockfish mantiene le caratteristiche principali che contraddistiguono la sua 
+versione precedente, e la valutazione NNUE viene utilizzata solo in posizioni materialmente bilanciate
+
