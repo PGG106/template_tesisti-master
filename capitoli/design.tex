@@ -33,8 +33,9 @@ linguaggio più beginner friendly  quali:
 Il primo passo dello sviluppo di un motore scacchistico è decidere come si vuole rappresentare 
 la scacchiera , si tratta di una scelta fondamentale,non solo perché in seguito ci permetterà
 di testare le funzioni che andremo a implementare, ma anche perché è nella scacchiera che ,generalmente,
-viene conservato lo stato generale della partita (informazioni come il numero di turni trascorsi,lo 
-storico delle mosse e i permessi di arrocco ).Inoltre il tipo di codifica può influenzare la rapidità
+viene conservato lo stato generale della partita.\footnote{per stato di una partita si intendono informazioni come
+informazioni su chi ha diritto di muovere, i permessi di arrocco,lo stato della regola delle 50 mosse etc} 
+Inoltre il tipo di codifica può influenzare la rapidità
 e la facilità col quale possiamo accedere alle informazioni sullo stato corrente dei pezzi 
 e come vedremo in seguito è in grado di influenzare funzioni come la generazione delle mosse.
 Non è raro per motori scacchistici particolarmente complessi l'utilizzo di più tipi di board in base
@@ -43,9 +44,34 @@ Per la rappresentazione di una scacchiera sono chiaramente possibili moltissime 
 verranno illustrate alcune tra le più popolari ed utilizzate.
 
 \subsection{Rappresentazione Pezzocentrica}
+Si definisce rappresentazione pezzocentrica, un qualsiasi tipo di rappresentazione della scacchiera che mantiene liste
+array o set dei pezzi attualmente presenti sulla scacchiera con annesse le informazioni sulle caselle da essi occupate.
+Le rappresentazioni più comuni sono: 
 \subsubsection{Piece-Lists}
+liste o array di ogni pezzo sulla scacchiera,ogni elemento della lista o dell'array associa un pezzo
+alla casella che esso occupa .le caratteristiche di ogni pezzo (colore,tipo etc) 
+ possono essere associate all'indice dell'array in cui si trovano o essere presenti in ulteriori array 
+ o liste esterne. \emph{un'implementazione pratica di una Piece-List verrà mostrata in seguito all'interno
+ di questo capitolo}
+ 
+\subsubsection{Bitboards} 
+Una Bitboard è una struttura dati specifica per i giochi da tavolo,
+si tratta in sostanza  di una struttura dati in grado di immagazzinare lo stato di ogni casella della 
+scacchiera all'interno di una parola \footnote{Una parola è un gruppo di bit di una determinata dimensione che sono gestiti come unità dal set di istruzioni o dall'hardware di un processore} di 64 bit.
+Vediamo un esempio pratico, immaginiamo di avere una scacchiera che si trova nello stato di default di inizio
+partita:\\
+\includegraphics[scale=0.5] {scacchiera.png}\\
+Una bitboard tipica è quella che ci permette di sapere in quali caselle è presente un pedone
+nero,per costruirla, operando casella per casella, ci poniamo una domanda "in questa casella
+è presente un pedone nero?" se si allora quella casella viene marcata con un 1 , altrimenti viene
+marcata con uno 0, il risultato di questa traduzione diventa in questo caso:\\
+\includegraphics[scale=0.3] {bitboard.png}
 \subsubsection{Piece-Sets}
-\subsubsection{Bitboards}
+rappresentazione con set con un bit per ogni pezzo dentro una parola a 32 bit o 2 parole a 16 bit (una per lato) 
+i Piece-sets hanno  delle somiglianze con le bitboards, ma ogni  bit del set non è   direttamente correlato ad una casella, 
+ma ad un indice  dentro ad una  piece-list. Spesso la bit-position di un  piece-set  implica 
+ , di che tipo e colore il pezzo è. - mentre le  bitboards solitamente mantengono set distinti  
+ per pezzi diversi.
 
 
 \subsection{Rappresentazione Casellocentrica}
