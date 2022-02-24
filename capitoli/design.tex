@@ -1,4 +1,4 @@
-\chapter{Progettazione e implementazione} %\label{1cap:spinta_laterale}
+\chapter{Rappresentazione della scacchiera e dei pezzi} %\label{1cap:spinta_laterale}
 % [titolo ridotto se non ci dovesse stare] {titolo completo}
 %
 
@@ -7,29 +7,8 @@
 \end{citazione}
 
 \newpage
-\section{Prefazione} %\label{1sec:scopo}
-Lo sviluppo di un motore scacchistico è fortemente influenzato dalle scelte progettuali,
-una di queste è il linguaggio di programmazione che si vuole utilizzare,
-le prestazioni di un motore possono essere fortemente influenzate dalla natura del linguaggio di
-programmazione, in particolare l'utilizzo di un linguaggio interpretato e non compilato può impattare
-notevolmente sulla velocità con la quale il nostro motore è in grado di elaborare le milioni di
-posizioni con le quali dovrà avere a che fare in una singola partita.
-Tutti gli esempi di codice all'interno di questa tesi saranno scritti nel linguaggio C, si consiglia
-quindi di avere almeno una minima familiarità con tale linguaggio.Si segnalano comunque diversi
-tool  per il linguaggio python per chi volesse approcciarsi a questo mondo utilizzando un
-linguaggio più beginner friendly  quali:
-\begin{itemize}
-    \item \textbf{python-chess}: una libreria di python che contiene funzioni di libreria per la rappresentazione
-          di scacchiera e pezzi e per la generazione e validazione delle mosse,utile se ci si vuole concentrare
-          esclusivamente sulla parte di ricerca e di valutazione  di un motore scacchistico.
-    \item \textbf{Sunfish}: un motore scacchistico per principianti scritto nel linguaggio python che
-          in sole 111 linee di codice illustra ,in maniera semplificata, l'implementazione della
-          gran parte dei concetti  chiave di un motore scacchistico.
 
-\end{itemize}
-
-
-\section{Rappresentazione della scacchiera e dei pezzi} %\label{1sec:scopo}
+\section{Introduzione} %\label{1sec:scopo}
 Il primo passo dello sviluppo di un motore scacchistico è decidere come si vuole rappresentare
 la scacchiera , si tratta di una scelta fondamentale,non solo perché in seguito ci permetterà
 di testare le funzioni che andremo a implementare, ma anche perché è nella scacchiera che ,generalmente,
@@ -43,7 +22,7 @@ al tipo di informazione da conservare e all'utilizzo che se ne vuole fare.
 Per la rappresentazione di una scacchiera sono chiaramente possibili moltissime scelte, di seguito
 verranno illustrate alcune tra le più popolari ed utilizzate.
 
-\subsection{Rappresentazione della scacchiera Pezzocentrica}
+\section{Rappresentazione della scacchiera Pezzocentrica}
 Si definisce rappresentazione pezzocentrica, un qualsiasi tipo di rappresentazione della scacchiera che mantiene liste
 array o set dei pezzi attualmente presenti sulla scacchiera con annesse le informazioni sulle caselle da essi occupate.
 Le rappresentazioni più comuni sono:
@@ -102,7 +81,7 @@ per pezzi diversi.
 \clearpage
 
 
-\subsection{Rappresentazione della scacchiera Casellocentrica}
+\section{Rappresentazione della scacchiera Casellocentrica}
 La rappresentazione casellocentrica  mantiene un associazione inversa rispetto a quella pezzocentrica,
 per ogni casella conserviamo in memoria se è vuota o occupata da un pezzo in particolare.
 La macro-categoria di  rappresentazione più comune è la Mailbox:
@@ -139,7 +118,7 @@ Una board 10x12  contorna una  board 8x8   con traverse e colonne sentinelle  pe
 \clearpage
 
 
-\subsection{Rappresentazione dei pezzi}
+\section{Rappresentazione dei pezzi}
 una volta scelto il tipo di rappresentazione della scacchiera si può iniziare a pensare alla rappresentazione dei pezzi,
 anche se può sembrare controintuitivo i pezzi non hanno bisogno di una struttura elaborata,la generazione delle possibili
 mosse verrà gestita nella move generation ed il loro spostamento all'interno della scacchiera verrà gestito dalla funzione
@@ -149,7 +128,7 @@ tramite interi, dove ad ogni tipo di pezzo viene assegnato un numero che funge d
 caratteri, dove ad ogni tipo di pezzo viene assegnato un carattere che lo identifica.
 
 
-\subsection{Esempio di implementazione}
+\section{Esempio di implementazione}
 Nel motore che andremo a realizzare verrà adottato un approccio ibrido,con bitboards utilizzate per conservare le posizioni dei pedoni,una board 10x12 per tenere traccia di tutti i pezzi in gioco
 e delle piece-lists per effettuare più rapidamente operazioni di lookup, la codifica dei pezzi avverrà tramite l'utilizzo di interi e il linguaggio utilizzato come già specificato precedentemente  sarà il C.
 
@@ -281,17 +260,25 @@ Definiamo un enum per poter accedere alle caselle della scacchiera in maniera pi
     \label{boardenum}
 \end{figure}
 
-Infine definiamo,come visto nel paragrafo \ref{codifica}, degli array ai quali sarà possibile accedere globalmente,per effettuare in tempo costante il lookup di
-\begin{figure}[!tbp]
+Infine definiamo,come visto nel paragrafo \ref{codifica}, degli array ai quali sarà possibile accedere globalmente,per effettuare in tempo costante il lookup delle conversioni dell'indice di una casella
+da una rappresentazione 10x12 ad una 8x8 e viceversa, e della colonna e della traversa di appartenenza di una casella a partire dall'indice della stessa, la definizione è effettuata in Board\_Data.h mentre la definizione
+è in init.c,una raccolta di funzioni che si occupano di inizializzare il programma all'avvio.
+
+\begin{figure}
     \centering
-    \begin{minipage}{0.4\textwidth}
+    \begin{minipage}{0.3\textwidth}
         \includegraphics[width=\textwidth]{BoardData-h.png}
-        \caption{PieceData.h}
+        \caption{Board\_Data.h}
     \end{minipage}
     \hfill
-    \begin{minipage}{0.4\textwidth}
-        \includegraphics[width=\textwidth]{PieceDatac.png}
-        \caption{PieceData.c}
+    \begin{minipage}{0.3\textwidth}
+        \includegraphics[width=\textwidth]{init1.png}
+        \caption{init.c}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \includegraphics[width=\textwidth]{init2.png}
+        \caption{init.c}
     \end{minipage}
 \end{figure}
 
@@ -366,7 +353,7 @@ nella figura \ref{scacchierah} troviamo le firme delle funzioni da porre nel fil
 
 
 
-\subsection{Permessi di arrocco}
+\section{Permessi di arrocco}
 \label{arrocco}
 L'arrocco è  una mossa particolare nel gioco degli scacchi che coinvolge il re e una delle due
 torri. È l'unica mossa che permette di muovere due pezzi contemporaneamente nonché l'unica
@@ -414,7 +401,7 @@ per controllare o eliminare i permessi basterà usare delle operazioni bitwise.
 
 
 
-\subsection{En passant}
+\section{En passant}
 \label{enpassant}
 Nel gioco degli scacchi la presa en passant o presa al varco è una mossa speciale, cioè un'eccezione alle normali regole del movimento dei pezzi.
 La presa en passant  è una mossa che coinvolge esclusivamente i pedoni e può essere eseguita da ciascun pedone che si trovi nelle condizioni adatte.
@@ -442,7 +429,7 @@ questo significa che, per indicare la presenza di un possibile presa è sufficie
 possibile catturare con en passant,trattandosi di un elemento della partita strettamente legato alle mosse, l'aspetto implementativo e di gestione verrà approfondito nella sottosezione \ref{move generation} dedicata alla generazione delle mosse
 
 
-\subsection{Undo}
+\section{Undo}
 \label{undo}
 \begin{figure}[H]
     \centering
@@ -457,22 +444,3 @@ il rollback della scacchiera ad uno stato precedente:
     \item   \textbf{fiftyMove}:
     \item   \textbf{poskey}:
 \end{itemize}
-
-
-
-\section{Move Generation} %\label{1sec:scopo}
-\label{move generation}
-
-\subsection{Perft}
-
-\subsection{Esempio di implementazione}
-
-
-\section{Ricerca} %\label{1sec:scopo}
-\subsection{Esempio di implementazione}
-
-\section{Valutazione} %\label{1sec:scopo}
-\subsection{Esempio di implementazione}
-
-\section{libro delle aperture,Tablebases} %\label{1sec:scopo}
-\subsection{Esempio di implementazione}
