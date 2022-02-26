@@ -42,14 +42,14 @@ partita:
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth/2] {scacchiera.png}
-    \caption{Scacchiera nella classica posizione di finale con alfieri di colore opposto }
+    \caption{Scacchiera nella posizione iniziale di gioco }
 \end{figure}
 
 Una bitboard tipica è quella che ci permette di sapere in quali caselle è presente un pedone
 nero,per costruirla, operando casella per casella, ci poniamo una domanda "in questa casella
 è presente un pedone nero?" se si allora quella casella viene marcata con un 1 , altrimenti viene
 marcata con uno 0, il risultato di questa traduzione diventa in questo caso:
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\linewidth/2] {bitboard.png}
     \caption{bitboard}
@@ -63,19 +63,20 @@ ma ad un indice  dentro ad una  piece-list. Spesso la bit-position di un  piece-
 , di che tipo e colore il pezzo è. - mentre le  bitboards solitamente mantengono set distinti
 per pezzi diversi.
 
-\begin{figure}
+\begin{figure}[!bp]
     \centering
-    \includegraphics[width=\linewidth/3]{board.png}
-    \caption{Scacchiera nella classica posizione di finale con alfieri di colore opposto }
-    \label{board}
+    \begin{minipage}[t]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{board.png}
+        \caption{Scacchiera nella classica posizione di finale con alfieri di colore opposto }
+        \label{board}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]{placeholder.png}
+        \caption{Rappresentazione set-wise della scacchiera in figura \ref{board} }
+    \end{minipage}
 \end{figure}
-\newpage
-\vfill
-\begin{figure}
-    \centering
-    \includegraphics[scale=0.2]{placeholder.png}
-    \caption{Rappresentazione set-wise della scacchiera in figura \ref{board} }
-\end{figure}
+
 
 \vfill
 \clearpage
@@ -122,8 +123,8 @@ Una board 10x12  contorna una  board 8x8   con traverse e colonne sentinelle  pe
 una volta scelto il tipo di rappresentazione della scacchiera si può iniziare a pensare alla rappresentazione dei pezzi,
 anche se può sembrare controintuitivo i pezzi non hanno bisogno di una struttura elaborata,la generazione delle possibili
 mosse verrà gestita nella move generation ed il loro spostamento all'interno della scacchiera verrà gestito dalla funzione
-MakeMove (approfondimenti riguardo questi due argomenti verranno presto forniti),per i pezzi quindi abbiamo bisogno di una
-rappresentazione semplice, di facile interpretazione e che occupi poco spazio,rappresentazioni molto comuni sono quella
+MakeMove (approfondimenti riguardo questi due argomenti sono presenti nel capitolo \ref{move generation}  ),per i pezzi quindi abbiamo bisogno di una
+rappresentazione semplice, di facile interpretazione e che occupi poco spazio.\\Rappresentazioni molto comuni sono quella
 tramite interi, dove ad ogni tipo di pezzo viene assegnato un numero che funge da identificativo univoco e quella tramite
 caratteri, dove ad ogni tipo di pezzo viene assegnato un carattere che lo identifica.
 
@@ -146,14 +147,14 @@ Inoltre,essendo un motore scacchistico un progetto che predilige la rapidità di
 anche se sconsigliabile in quasi ogni altro contesto,conserviamo i dati che caratterizzano i pezzi,sulla base del loro indice,in un insieme di array che verrà condiviso come insieme di variabili
 esterne dall'intero progetto, permettendo un lookup in tempo costante di tali informazioni.Per fare ciò adoperiamo un file header che conterrà le dichiarazioni ed un unico file sorgente dove saranno presenti le
 definizioni.Definiamo infine delle macro per rendere il codice più pulito e leggibile.
-\begin{figure}[!tbp]
+\begin{figure}[h]
     \centering
-    \begin{minipage}{0.4\textwidth}
+    \begin{minipage}[t]{0.4\textwidth}
         \includegraphics[width=\textwidth]{PieceDatah.png}
         \caption{PieceData.h}
     \end{minipage}
     \hfill
-    \begin{minipage}{0.4\textwidth}
+    \begin{minipage}[t]{0.4\textwidth}
         \includegraphics[width=\textwidth]{PieceDatac.png}
         \caption{PieceData.c}
     \end{minipage}
@@ -252,7 +253,7 @@ contiene anche le informazioni sullo stato delle partita,vedremo quindi anche co
           di ordinamento.
 \end{itemize}
 
-Definiamo un enum per poter accedere alle caselle della scacchiera in maniera più naturale \ref{boardenum}
+Definiamo un enum per poter accedere alle caselle della scacchiera in maniera più naturale
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth/2]{enumscacchiera.png}
@@ -261,36 +262,78 @@ Definiamo un enum per poter accedere alle caselle della scacchiera in maniera pi
 \end{figure}
 
 Infine definiamo,come visto nel paragrafo \ref{codifica}, degli array ai quali sarà possibile accedere globalmente,per effettuare in tempo costante il lookup delle conversioni dell'indice di una casella
-da una rappresentazione 10x12 ad una 8x8 e viceversa, e della colonna e della traversa di appartenenza di una casella a partire dall'indice della stessa, la definizione è effettuata in Board\_Data.h mentre la definizione
+da una rappresentazione 10x12 ad una 8x8 e viceversa, e ,della colonna e della traversa di appartenenza di una casella a partire dall'indice della stessa, la dichiarazione è effettuata in Board\_Data.h mentre la definizione
 è in init.c,una raccolta di funzioni che si occupano di inizializzare il programma all'avvio.
-
-\begin{figure}
+\begin{figure}[H]
     \centering
-    \begin{minipage}{0.3\textwidth}
+    \begin{minipage}[H]{0.8\textwidth}
         \includegraphics[width=\textwidth]{BoardData-h.png}
         \caption{Board\_Data.h}
     \end{minipage}
-    \hfill
-    \begin{minipage}{0.3\textwidth}
-        \includegraphics[width=\textwidth]{init1.png}
-        \caption{init.c}
+\end{figure}
+
+
+\subsubsection{Inizializzare la scacchiera all'avvio della partita}
+Abbiamo precedentemente visto che la scacchiera fa un ampio utilizzo di raccolte di dati esterne, per semplificare il processo di inizializzazione di queste componenti creeremo un insieme di funzioni che si occupa di inizializzare atomicamente i vari componenti, tutte queste funzioni verranno dichiarate nel header init.h ed implementate nel file sorgente init.c
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}[b]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{init-h.png}
+        \caption{init.h}
     \end{minipage}
     \hfill
-    \begin{minipage}{0.3\textwidth}
-        \includegraphics[width=\textwidth]{init2.png}
-        \caption{init.c}
+    \begin{minipage}[b]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{init-c.png}
+        \caption{definizione dei dati esterni in init.c pre inizializzazione }
     \end{minipage}
 \end{figure}
+
+
+\subsubsection{initHashKeys}
+\small{InitHashKey inizializza le key univoche randomiche per ogni pezzo in ogni posizione,questa operazione viene effettuata ogni volta ed una volta sola all'avvio del programma per far si che le chiavi siano uniche nella sessione corrente ma internamente consistenti durante il ciclo di vita del software. }
+\begin{figure}[h]
+ 
+        \centering \raisebox{\dimexpr-\height+1.5ex\relax}{{\includegraphics[width=0.9\linewidth]{inithash.png}}}
+\end{figure}
+
+\newpage
+
+\subsubsection{InitSq120To64}
+\FloatBarrier
+\begin{figure}[h]
+    \begin{minipage}[t]{0.63\textwidth}
+        \centering \raisebox{\dimexpr-\height+1.5ex\relax}{\includegraphics[width=\linewidth]{initSQ120.png}}
+    \end{minipage}
+    \begin{minipage}[t]{0.35\textwidth}
+        {InitSQ120To64 inizializza i due array utilizzati per effettuare comodamente ed in tempo costante traduzioni dall'indice di una casella in una scacchiera in formato 12x10 a quello di una casella in una scacchiera in formato 8x8 e viceversa. }
+    \end{minipage}
+\end{figure}
+\FloatBarrier
+
+\subsubsection{InitFilesRanksBrd}
+
+\begin{figure}[h]
+    \begin{minipage}[t]{.63\textwidth}
+        \centering \raisebox{\dimexpr-\height+1.5ex\relax}{\includegraphics[scale=0.9]{initfilesrank.png}}
+    \end{minipage}
+    \begin{minipage}[t]{0.35\textwidth}
+        {InitFilesRanksBrd inizializza i due array utilizzati per effettuare comodamente ed in tempo costante traduzioni }
+    \end{minipage}
+\end{figure}
+
+
 
 
 
 \subsubsection{Funzioni per operare sulla scacchiera}
 Una volta definita la struttura della scacchiera è il momento di definire alcune funzioni indispensabili per operare sulla stessa,
 nella figura \ref{scacchierah} troviamo le firme delle funzioni da porre nel file board.h,di seguito troviamo una descrizione dello scopo di ogni funzione e chiarimenti sulle implementazioni
+presenti nel file sorgente board.c
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth/2]{boardc.png}
-    \caption{ board-h.png}
+    \includegraphics[width=\linewidth]{boardc.png}
+    \caption{ board.h}
     \label{scacchierah}
 \end{figure}
 
@@ -332,22 +375,39 @@ nella figura \ref{scacchierah} troviamo le firme delle funzioni da porre nel fil
     \end{minipage}
 \end{figure}
 
-
+\newpage
 \subsubsection{ParseFen}
-
-
+\FloatBarrier
+ParseFen si occupa di tradurre una stringa FEN in una posizione all'interno della scacchiera.
 \begin{figure}[H]
     \centering
-    \begin{minipage}[b]{0.4\textwidth}
+    \begin{minipage}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{ParseFen1.png}
-        \caption{ParseFen parte 1}
+        \caption{ParseFen1.png}
     \end{minipage}
     \hfill
     \begin{minipage}[b]{0.4\textwidth}
-        \includegraphics[width=\textwidth]{ParseFen2.png}
-        \caption{ParseFen parte 2}
+        \includegraphics[width=0.96\textwidth]{ParseFen2.png}
+        \caption{ParseFen2.png}
     \end{minipage}
 \end{figure}
+
+\FloatBarrier
+
+\subsubsection{CheckBoard}
+\FloatBarrier
+
+\begin{figure}[H]
+    \begin{minipage}[t]{.63\textwidth}
+        \centering \raisebox{\dimexpr-\height+1.5ex\relax}{ \includegraphics[width=0.79\textwidth]{CheckBoard.png}}
+    \end{minipage}
+    \begin{minipage}[t]{0.35\textwidth}
+        \large{CheckBoard è la funzione che permette di controllare lo stato della scacchiera, per prima cosa viene effettuato un riscontro tra la piece-list e la posizione dei pezzi sulla scacchiera,viene poi controllato che il numero dei pezzi salvati nella posizione corrisponda al numero dei pezzi presente sulla scacchiera
+            si controlla poi che le bitboard siano accurate rispetto alla presenza dei pedoni,infine si controlla la correttezza delle variabili di stato quali la poskey ed i permessi di castling, se nessuno dei controlli fallisce la funzione restituisce true.}
+    \end{minipage}
+\end{figure}
+
+\FloatBarrier
 
 
 
@@ -413,13 +473,13 @@ altrimenti perde il diritto a farlo.
 
 \begin{figure}[H]
     \centering
-    \begin{minipage}[b]{0.4\textwidth}
+    \begin{minipage}[t]{0.4\textwidth}
         \includegraphics[width=\textwidth]{pre_enpas.png}
         \caption{posizione di gioco dove è possibile catturare con en passant}
         \label{pre_enpas}
     \end{minipage}
     \hfill
-    \begin{minipage}[b]{0.4\textwidth}
+    \begin{minipage}[t]{0.4\textwidth}
         \includegraphics[width=\textwidth]{post_enpas.png}
         \caption{posizione della figura \ref{pre_enpas} post cattura con en passant}
     \end{minipage}
@@ -438,9 +498,9 @@ possibile catturare con en passant,trattandosi di un elemento della partita stre
 Struttura dati che contiene ogni mossa effettuata e lo stato della scacchiera prima che quella mossa venisse fatta,fondamentale per potere effettuare
 il rollback della scacchiera ad uno stato precedente:
 \begin{itemize}
-    \item   \textbf{move}:
-    \item   \textbf{castlePerm}:
-    \item   \textbf{enPas}:
-    \item   \textbf{fiftyMove}:
-    \item   \textbf{poskey}:
+    \item   \textbf{move}: contiene la mossa svolta al momento di creazione dell'istanza della struttura dati,è utilizzata per riportare la scacchiera allo stato precedente alla mossa tramite una funzione di UnMake,approccio preferibile rispetto al salvataggio e al ripristino dell'intera posizione.
+    \item   \textbf{castlePerm}: contiene i permessi al momento di creazione dell'istanza della struttura dati.
+    \item   \textbf{enPas}: contiene la casella di en passant al momento di creazione dell'istanza della struttura dati.
+    \item   \textbf{fiftyMove}: contiene il contatore per la regola delle 50 mosse al momento di creazione dell'istanza della struttura dati.
+    \item   \textbf{poskey}: contiene la hashkey della posizione al momento di creazione dell'istanza della struttura dati.
 \end{itemize}
