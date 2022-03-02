@@ -30,8 +30,7 @@ Le rappresentazioni più comuni sono:
 liste o array di ogni pezzo sulla scacchiera,ogni elemento della lista o dell'array associa un pezzo
 alla casella che esso occupa .le caratteristiche di ogni pezzo (colore,tipo etc)
 possono essere associate all'indice dell'array in cui si trovano o essere presenti in ulteriori array
-o liste esterne. \emph{un'implementazione pratica di una Piece-List verrà mostrata in seguito all'interno
-    di questo capitolo}
+o liste esterne.
 
 \subsubsection{Bitboards}
 Una Bitboard è una struttura dati specifica per i giochi da tavolo,
@@ -504,3 +503,6 @@ il rollback della scacchiera ad uno stato precedente:
     \item   \textbf{fiftyMove}: contiene il contatore per la regola delle 50 mosse al momento di creazione dell'istanza della struttura dati.
     \item   \textbf{poskey}: contiene la hashkey della posizione al momento di creazione dell'istanza della struttura dati.
 \end{itemize}
+
+
+\section{Generare la chiave hash della posizione}
