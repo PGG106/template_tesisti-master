@@ -171,15 +171,17 @@ di cpu e risulta quindi molto più efficiente di un approccio con bitboard magic
 
 
 \subsection{Perft}
-Perft è una funzione di debugging che attraversa l'albero delle mosse legali generate e conta tutti i nodi
-foglia fino ad una data profondità n.Il numero viene poi comparato con dei valori noti per controllare la
-presenza di bug.
-I nodi vengono contati alla fine della generazione, dopo l'ultimo makemove,non vengono quindi contati
-i nodi foglia che si trovano a profondità superiori di n.Perft inoltre ignora i pareggi per ripetizione,
-per la regola delle 50 mosse, e per materiale insufficiente.Utilizzando la stessa versione di perft, o In
-alternativa una versione estremamente simile di perft,è possibile comparare il tempo impiegato da diversi
-generatori di mosse.
+Perft è una funzione di debugging che attraversa l'albero delle mosse legali generate e conta tutti i nodi foglia fino ad una data profondità n.
+Il numero viene poi comparato con dei valori noti per controllare la presenza di bug nella nostra generazione delle mosse.
+una funzione di Perft può essere anche utilizzata per testare le prestazioni di una stessa funzione di move generation su macchine diverse ,confrontando il tempo impiegato per la sua esecuzione su ognuna delle macchine
+o similmente può essere utilizzata per testare la rapidità di diversi approcci alla generazione delle mosse.
 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{perftscore.png}
+    \caption{Output tipico di una funzione di perft,il numero di nodi viene diviso per sottoalbero di appartenenza per facilitare il debugging, il numero di nodi al secondo (32.27M) può essere utilizzato come metrica prestazionale}
+\end{figure}
 
 
 \section{Ricerca} \label{ricerca}
