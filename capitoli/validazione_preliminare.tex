@@ -54,7 +54,7 @@ Per ovviare a questo problematiche ed ottenere una misura di elo significativa �
 
 Oltre al punteggio ELO esistono altre metriche che possono essere utilizzate per analizzare singolarmente alcune delle componenti che compongono un motore,
 per la generazione delle mosse abbiamo già visto nel paragrafo \ref{move generation} che è possibile utilizzare la funzione di Perft per valutare le prestazioni di un generatore di mosse,ed essendo la generazione
-delle mosse un concetto molto semplice, possiamo seguire un euristica basilare: "più nodi generati vengono generati al secondo migliore è il generatore",Valutare le parti 
+delle mosse un concetto molto semplice, possiamo seguire un euristica basilare: "più nodi vengono generati al secondo migliore è il generatore",valutare le parti 
 di ricerca non è invece altrettanto facile,se è vero che abbiamo un'idea di fondo alla base dell'ottimizzazione della nostra ricerca,ossia "meno nodi vengono esplorati migliore è la funzione di ricerca", è anche vero 
 che questo concetto, a differenza di quello della generazione delle mosse, è sottoposto ad ulteriori clausole,vogliamo si che il nostro algoritmo di ricerca esplori meno nodi possibili, ma vogliamo anche che la qualità
 delle scelte possibili venga preservata,un numero minore di nodi esplorati quindi, è positivo solo se la forza giocante del nostro motore non diminuisce (o ancor meglio se aumenta), ciò nonostante il variare del numero dei nodi 
