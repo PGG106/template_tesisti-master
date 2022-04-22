@@ -19,7 +19,8 @@ viene conservato lo stato generale della partita.\footnote{per stato di una part
 e la facilità col quale possiamo accedere alle informazioni sullo stato corrente dei pezzi
 e come vedremo in seguito è in grado di influenzare funzioni come la generazione delle mosse,per questi motivi,
 non è raro per motori scacchistici particolarmente complessi l'utilizzo di più tipi di strutture dati in base
-al tipo di informazione da conservare e all'utilizzo che se ne vuole fare.
+al tipo di informazione da conservare e all'utilizzo che se ne vuole fare, spesso alternando tra strutture efficienti dal punto di vista computazionale (bitboard) a strutture che permettono l'accesso casuale o facilitano 
+operazioni di manipolazione da parte di un programmatore umano (qualsiasi rappresentazione casellocentrica).
 \\Per la rappresentazione di una scacchiera sono chiaramente possibili moltissime scelte, di seguito
 verranno illustrate alcune tra le più popolari ed utilizzate.
 
@@ -29,7 +30,7 @@ array o set dei pezzi attualmente presenti sulla scacchiera con annesse le infor
 Le rappresentazioni più comuni sono:
 \subsubsection{Piece-Lists}
 liste o array di ogni pezzo sulla scacchiera,ogni elemento della lista o dell'array associa un pezzo
-alla casella che esso occupa .le caratteristiche di ogni pezzo (colore,tipo etc)
+alla casella che esso occupa .Le caratteristiche di ogni pezzo (colore,tipo etc)
 possono essere associate all'indice dell'array in cui si trovano o essere presenti in ulteriori array
 o liste esterne.
 
@@ -87,12 +88,13 @@ Questo tipo di rappresentazione è usata spesso come rappresentazione ridondante
 per individuare se e quali pezzi sono presenti su una casella in maniera efficiente.
 
 \subsubsection{10x12 Board}
-Una board 10x12  contorna una  board 8x8   con traverse e colonne sentinelle  per individuare  indici al di fuori della scacchiera durante la generazione delle mosse
+Una board 10x12 visibile nella figura \ref{10x12} contorna una board 8x8 con traverse e colonne sentinelle per individuare indici al di fuori della scacchiera durante la generazione delle mosse.
 \vfill
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth/2]{10x12 board.png}
     \caption{Rappresentazione di una board 10x12,notare come le 2 traverse extra sopra e sotto siano necessarie per evitare accessi out of bounds in caso di cavalli posizionati sulla prima o ottava fila }
+    \label{10x12}
 \end{figure}
 
 
@@ -145,7 +147,7 @@ da preferire in base all'architettura della macchina che esegue il motore.
 L'approccio con le bitboard magiche consiste nell'assegnare ad ogni pezzo scorrevole un numero "magico" pre-calcolato per ogni casella della scacchiera, rappresentata da una bitboard,quel numero verrà poi moltiplicato
  per il valore individuato dalla posizione dei pezzi bloccanti sulla scacchiera,
 questa moltiplicazione darà luogo ad un indice con il quale accedere ad un archivio di bitboard di 
-attacco\footnote{bitboard che segnala con dei bit ad 1 quali caselle il pezzo può attaccare} pre-calcolate,Si tratta di una soluzione meno efficiente rispetto alle bitboard che si basano sull'utilizzo di pext
+attacco\footnote{bitboard che segnala con dei bit ad 1 quali caselle il pezzo può attaccare} pre-calcolate, Si tratta di una soluzione meno efficiente rispetto alle bitboard che si basano sull'utilizzo di pext
 e va utilizzata solo in caso di architetture che non supportano nativamente il set di istruzioni BMI2.
 
 

@@ -6,19 +6,21 @@
 
 \section{Contesto applicativo} %\label{1sec:scopo}
 Gli scacchi sono un gioco di strategia deterministico a somma zero e ad informazione completa  
-che si svolge su una tavola quadrata formata da 64 caselle ,di due colori alternati,
-detta scacchiera, sulla quale ogni giocatore contraddistinto da uno dei due colori (bianco o nero), dispone di 16 pezzi:un re, regina, due alfieri, due cavalli, due torri e otto pedoni.
+che si svolge su una tavola quadrata formata da 64 caselle, di due colori alternati,
+detta scacchiera, sulla quale ogni giocatore contraddistinto da uno dei due colori (bianco o nero), dispone di 16 pezzi: un re, regina, due alfieri, due cavalli, due torri e otto pedoni.
 obiettivo del gioco è dare scacco matto, ovvero minacciare la cattura del re avversario mentre esso non
 ha modo di rimuovere il re dalla sua posizione di pericolo alla sua prossima mossa.
 
 
 
 \section{Motivazioni e obiettivi}
-Gli scacchi,gioco nato in india attorno al 600 d.C e campo di battaglia in uno dei più famosi scontri tra uomo e macchina 
-(Kasparov vs Deep Blue 1996-1997), non hanno mai fallito nel saper cattivare  l'attenzione del grande pubblico nei loro 1400 anni di storia.
+Gli scacchi,gioco nato in india attorno al 600 d.C e campo di battaglia in uno dei più famosi scontri tra uomo e macchina\footnote{Nel 1996 e nel 1997 avvennero due delle partite di scacchi più importanti di sempre,
+ per la prima volta un computer, Deep Blue progettato e prodotto da IBM, sfidava un campione del mondo di scacchi, e non un campione qualsiasi ma Garry Kasparov , uno dei giocatori più vincenti e titolati di sempre, 
+ l'evento dalla notevole importanza mediatica terminò prima con una vittoria da parte di Kasparov nel 1996 e poi con una vittoria di Deep Blue in una rivincita del 1997, segnando per molti quella che rappresenta la
+  fine della supremazia umana nel gioco degli scacchi. }, non hanno mai fallito nel saper cattivare  l'attenzione del grande pubblico nei loro 1400 anni di storia.
  \\È facile capire come sia possibile se ci si concentra su una delle caratteristiche fondamentali del 
  gioco degli scacchi  questa caratteristica è la \textbf{complessità}.\\In una partita di scacchi fin dalla prima mossa 
-sono possibili 20 scelte, per la seconda  il totale di possibili combinazioni  sale a 400,
+sono possibili 20 scelte, come visibile nella figura \ref{mosse}, per la seconda  il totale di possibili combinazioni  sale a 400,
  dopo 5 mosse avremo 119,060,324 possibili risposte,in totale le possibili mosse di una partita si stimano attorno alle \(2^{155} \).
  \\Con uno spazio di ricerca cosi grande non dovrebbe stupire scoprire che è da quando esistono i computer che si cerca un modo
  di sfruttare la loro potenza di calcolo nel mondo degli scacchi.
@@ -29,9 +31,22 @@ sono possibili 20 scelte, per la seconda  il totale di possibili combinazioni  s
  in grado di guidare chiunque lo legga nella creazione di un motore scacchistico spiegando tutte le fasi della progettazione
  ed illustrando le possibili scelte che condizionano l'efficienza di un motore.
 
+
+ \begin{figure}
+    \centering
+    \includegraphics[width=\linewidth/2] {mosse.png}
+    \caption{le 20 mosse iniziali possibili per il giocatore bianco ad inizio partita}
+    \label{mosse}
+\end{figure}
+
+
+
+
+
+
 \section{Risultati ottenuti}
 È stato ottenuto un motore scacchistico di medio livello che implementa tutte le componenti più importanti, in grado di essere 
-capito anche da un novizio ma che allo stesso tempo funge da ottima base per lo sviluppo di un motore allo stato dell'arte,sono anche
+capito anche da un novizio ma che allo stesso tempo funge da ottima base per lo sviluppo di un motore allo stato dell'arte, sono anche
 stati raccolti dati sull'effetto di queste tecniche, utilizzati per produrre una prova della loro efficacia.
 
 
