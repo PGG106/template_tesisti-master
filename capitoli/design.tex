@@ -11,25 +11,25 @@
 
 \subsection{Introduzione} %\label{1sec:scopo}
 Il primo passo dello sviluppo di un motore scacchistico è decidere come si vuole rappresentare
-la scacchiera , si tratta di una scelta fondamentale,non solo perché in seguito ci permetterà
-di testare le funzioni che andremo a implementare, ma anche perché è nella scacchiera che ,generalmente,
+la scacchiera , si tratta di una scelta fondamentale, non solo perché in seguito ci permetterà
+di testare le funzioni che andremo a implementare, ma anche perché è nella scacchiera che , generalmente,
 viene conservato lo stato generale della partita.\footnote{per stato di una partita si intendono informazioni come
     informazioni su chi ha diritto di muovere, i permessi di arrocco,lo stato della regola delle 50 mosse etc}
 \\Inoltre il tipo di codifica può influenzare la rapidità
 e la facilità col quale possiamo accedere alle informazioni sullo stato corrente dei pezzi
-e come vedremo in seguito è in grado di influenzare funzioni come la generazione delle mosse,per questi motivi,
+e come vedremo in seguito è in grado di influenzare funzioni come la generazione delle mosse, per questi motivi,
 non è raro per motori scacchistici particolarmente complessi l'utilizzo di più tipi di strutture dati in base
 al tipo di informazione da conservare e all'utilizzo che se ne vuole fare, spesso alternando tra strutture efficienti dal punto di vista computazionale (bitboard) a strutture che permettono l'accesso casuale o facilitano 
 operazioni di manipolazione da parte di un programmatore umano (qualsiasi rappresentazione casellocentrica).
 \\Per la rappresentazione di una scacchiera sono chiaramente possibili moltissime scelte, di seguito
-verranno illustrate alcune tra le più popolari ed utilizzate.
+verranno illustrate alcune tra le più famose ed utilizzate.
 
 \subsection{Rappresentazione della scacchiera Pezzocentrica}
 Si definisce rappresentazione pezzocentrica, un qualsiasi tipo di rappresentazione della scacchiera che mantiene liste
 array o set dei pezzi attualmente presenti sulla scacchiera con annesse le informazioni sulle caselle da essi occupate.
 Le rappresentazioni più comuni sono:
 \subsubsection{Piece-Lists}
-liste o array di ogni pezzo sulla scacchiera,ogni elemento della lista o dell'array associa un pezzo
+liste o array di ogni pezzo sulla scacchiera, ogni elemento della lista o dell'array associa un pezzo
 alla casella che esso occupa .Le caratteristiche di ogni pezzo (colore,tipo etc)
 possono essere associate all'indice dell'array in cui si trovano o essere presenti in ulteriori array
 o liste esterne.
