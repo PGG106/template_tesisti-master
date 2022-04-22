@@ -58,7 +58,7 @@ marcata con uno 0, il risultato di questa traduzione diventa in questo caso:
 \end{figure}
 
 La bitboard che codifica questa informazione sarà quindi la parola di 64 bit 00000000 11111111 00000000 00000000 00000000
-00000000 00000000 00000000.
+00000000 00000000 00000000 come si può vedere in \ref{scacchiera}.
 \subsubsection{Piece-Sets}
 Rappresentazione con set con un bit per ogni pezzo dentro una parola a 32 bit o 2 parole a 16 bit per ogni lato,
 i Piece-sets hanno  delle somiglianze con le bitboards, ma ogni  bit del set non è   direttamente correlato ad una casella,
@@ -88,7 +88,8 @@ Questo tipo di rappresentazione è usata spesso come rappresentazione ridondante
 per individuare se e quali pezzi sono presenti su una casella in maniera efficiente.
 
 \subsubsection{10x12 Board}
-Una board 10x12 visibile nella figura \ref{10x12} contorna una board 8x8 con traverse e colonne sentinelle per individuare indici al di fuori della scacchiera durante la generazione delle mosse.
+Una board 10x12 visibile nella figura \ref{10x12} contorna una board 8x8 con traverse e colonne sentinelle per individuare indici al di fuori della scacchiera durante la generazione delle mosse, anche questo tipo di board 
+come la 8x8 di cui è un derivativo, può essere usata per accedere in maniera efficiente e facile per un programmatore umano a specifiche caselle della scacchiera per individuare o meno la presenza di pezzi.
 \vfill
 \begin{figure}[!ht]
     \centering
@@ -102,8 +103,8 @@ Una board 10x12 visibile nella figura \ref{10x12} contorna una board 8x8 con tra
 \subsubsection{Rappresentazione dei pezzi}
 Una volta scelto il tipo di rappresentazione della scacchiera si può iniziare a pensare alla rappresentazione dei pezzi,
 anche se può sembrare controintuitivo i pezzi non hanno bisogno di una struttura elaborata,la generazione delle possibili
-mosse verrà gestita nella move generation ed il loro spostamento all'interno della scacchiera verrà gestito dalla funzione
-MakeMove (approfondimenti riguardo questi due argomenti sono presenti nel paragrafo \ref{move generation}  ),per i pezzi quindi abbiamo bisogno di una
+mosse verrà gestita nella move generation ed il loro spostamento all'interno della scacchiera verrà gestito da una funzione monolitica, in grado di distinguere autonomamente i pezzi, solitamente chiamata
+MakeMove, per i pezzi quindi abbiamo bisogno di una
 rappresentazione semplice, di facile interpretazione e che occupi poco spazio.\\Rappresentazioni molto comuni sono quella
 tramite interi, dove ad ogni tipo di pezzo viene assegnato un numero che funge da identificativo univoco e quella tramite
 caratteri, dove ad ogni tipo di pezzo viene assegnato un carattere che lo identifica (e che in linguaggi come il C è funzionalmente identica a quella per interi).
@@ -165,13 +166,14 @@ di cpu e risulta quindi molto più efficiente di un approccio con bitboard magic
 Perft è una funzione di debugging che attraversa l'albero delle mosse legali generate e conta tutti i nodi foglia fino ad una data profondità n.
 Il numero viene poi comparato con dei valori noti per controllare la presenza di bug nella nostra generazione delle mosse.
 Una funzione di Perft può essere anche utilizzata per testare le prestazioni di una stessa funzione di move generation su macchine diverse ,confrontando il tempo impiegato per la sua esecuzione su ognuna delle macchine
-o similmente può essere utilizzata per testare la rapidità di diversi approcci alla generazione delle mosse.
+o similmente può essere utilizzata per testare la rapidità di diversi approcci alla generazione delle mosse, ne possiamo osservare un esempio nella figura \ref{perftscore}.
 
 
 \begin{figure}[H]
     \centering
     \includegraphics{perftscore.png}
-    \caption{Output tipico di una funzione di perft,il numero di nodi viene diviso per sottoalbero di appartenenza per facilitare il debugging, il numero di nodi al secondo (32.27M) può essere utilizzato come metrica prestazionale}
+    \caption{Output tipico di una funzione di perft,il numero di nodi viene diviso per sottoalbero di appartenenza per facilitare il debugging, il numero di nodi al secondo (32.27M) può essere utilizzato come metrica prestazionale.}
+    \label{perftscore}
 \end{figure}
 
 
@@ -182,11 +184,11 @@ a 2 giocatori,a informazione perfetta e a somma zero, la ricerca implica l'attra
 Negli scacchi computazionali esistono due approcci alla progettazione di un algoritmo di ricerca,si può effettuare una ricerca a tappeto limitando la profondità
 della stessa per far si che i calcoli finiscano in tempi accettabili ,col rischio di sottovalutare implicazioni future di determinate mosse,o focalizzarsi su particolari mosse e quindi
 rami dell'albero di ricerca nel tentativo di dare maggiore spazio alle mosse migliori (sulla base dell'euristica scelta per determinare come sia fatta una mossa "migliore"), rischiando
-quindi di eliminare a priori mosse con dei risvolti successivi molto promettenti,l'approccio adottato da tutti i motori scacchistici moderni è il primo.
+quindi di eliminare a priori mosse con dei risvolti successivi molto promettenti,l'approccio adottato da quasi tutti i motori scacchistici moderni è il primo.
 
 \subsubsection{Algoritmi di ricerca}
 Data l'impossibilità di esplorare l'intero spazio dell'albero di ricerca che codifica il gioco degli scacchi, è necessario fare affidamento ad algoritmi in
-grado di ridurre il numero di nodi dell'albero,l'approccio più utilizzato è quello di una ricerca minimax con potatura alfa-beta ad approfondimento iterativo.
+grado di ridurre il numero di nodi dell'albero, l'approccio più utilizzato è quello di una ricerca minimax con potatura alfa-beta ad approfondimento iterativo.
 
 
 \subsubsection{Minimax e negamax}
@@ -196,7 +198,7 @@ L'obbiettivo finale è la minimizzazione (mini) del massimo guadagno del giocato
 l'algoritmo minimax quindi  assegna un valore ad ogni mossa , proporzionale a quanto essa diminuisce il valore della posizione per l'altro giocatore,
 l'effettivo valore che viene assegnato dipende dalla funzione di valutazione adottata,\emph{questo argomento verrà trattato successivamente nella parte dedicata alla valutazione}.
 L'algoritmo minimax è in grado di formulare una strategia perfetta per giochi abbastanza semplici da poter permettere 
-la valutazione dell'intero albero di ricerca,per giochi complessi come gli scacchi però questo non è possibile o lo è 
+la valutazione dell'intero albero di ricerca, per giochi complessi come gli scacchi però questo non è possibile o lo è 
 solo nelle fasi finali e ,in generale, si può solo calcolare una stima della probabilità che una data mossa porti alla vittoria di uno dei giocatori.
 Il calcolo di questa stima può essere migliorato se è possibile fornire una funzione di valutazione euristica che
 valuti le posizioni non terminali del gioco senza dover conoscere tutte le mosse successive: in questo caso si possono
@@ -205,8 +207,8 @@ in mosse. il numero di nodi da valutare cresce esponenzialmente con la profondit
 NP completa, il che lo rende poco pratico per ottenere una soluzione definitiva di giochi meno che banali,tuttavia, le prestazioni del minimax possono essere migliorate drasticamente,
 mantenendo la correttezza dei risultati, adottando la \textbf{potatura alfa-beta}.
 \\Negamax è una variante dell'algoritmo minimax che si basa sulla nozione che $max(a,b)= -min(-a,-b)$ per semplificare l'implementazione dell'algoritmo minimax,
-in pratica,il valore di una posizione per il giocatore A è l'opposto di segno di quello del giocatore B,quindi il giocatore che muove deve puntare a massimizzare il valore negato della posizione
-dopo la sua mossa,questo tipo di ragionamento è applicabile sia per il giocatore minimizzante che per quello massimizzante, questo modo di operare permette di non dover implementare due funzioni diverse per i due agenti 
+in pratica, il valore di una posizione per il giocatore A è l'opposto di segno di quello del giocatore B, quindi il giocatore che muove deve puntare a massimizzare il valore negato della posizione
+dopo la sua mossa, questo tipo di ragionamento è applicabile sia per il giocatore minimizzante che per quello massimizzante, questo modo di operare permette di non dover implementare due funzioni diverse per i due agenti 
 e di ridurre il tutto ad un solo algoritmo.
 
 
@@ -214,7 +216,7 @@ e di ridurre il tutto ad un solo algoritmo.
 \subsubsection{Potatura alfa-beta}
 La potatura alfa-beta è un algoritmo di ricerca utilizzato per ridurre il numero di nodi valutati dall'algoritmo 
 minimax,consiste nello smettere di esaminare una mossa, e con essa tutte le mosse derivanti da essa a profondità maggiori
-(i rami del nodo mossa,che vengono quindi "potati"),quando si rivela peggiore di una mossa già esaminata precedentemente,
+(i rami del nodo mossa,che vengono quindi "potati"), quando si rivela peggiore di una mossa già esaminata precedentemente,
 abbiamo quindi la rimozione di solo mosse ininfluenti per quanto riguarda l'albero minimax e quindi la mossa
 restituita dopo l'implementazione della potatura alfa-beta sarà equivalente a quella restituita da un algoritmo
 minimax senza potatura.
@@ -361,10 +363,10 @@ In termini pratici una realizzazione tipica di questa euristica si basa sulla ge
 
 
 \section {Libro delle aperture e Tablebase}
-Le mosse iniziali di una partita di scacchi,chiamate nel loro insieme "apertura" posseggono un particolare binomio di caratteristiche,si tratta di mosse che avvengono in posizioni estremamente aperte,con tutti o quasi i pezzi
-in gioco e quindi con moltissime possibilità da calcolare,allo stesso tempo si tratta di alcune tra le mosse più studiate in ambito di teoria scacchistica nel corso dei secoli,è prassi quindi quella di evitare che
-il calcolatore elabori da se le prime mosse e far si che si appoggi su un database di mosse di apertura chiamato appunto libro delle aperture,che contiene solitamente aperture che vanno dalle 4 alle 10-11 mosse.
-Seguendo ancora il paradigma di risparmiare al motore parti di calcolo basandosi su mosse precompilate,ma con un caso d'uso diametralmente opposto,ossia quando la posizione di gioco è abbastanza semplice
+Le mosse iniziali di una partita di scacchi, chiamate nel loro insieme "apertura" posseggono un particolare binomio di caratteristiche, si tratta di mosse che avvengono in posizioni estremamente aperte,con tutti o quasi i pezzi
+in gioco e quindi con moltissime possibilità da calcolare, allo stesso tempo si tratta di alcune tra le mosse più studiate in ambito di teoria scacchistica nel corso dei secoli, è prassi quindi quella di evitare che
+il calcolatore elabori da se le prime mosse e far si che si appoggi su un database di mosse di apertura chiamato appunto libro delle aperture, che contiene solitamente aperture che vanno dalle 4 alle 10-11 mosse.
+Seguendo ancora il paradigma di risparmiare al motore parti di calcolo basandosi su mosse precompilate,ma con un caso d'uso diametralmente opposto, ossia quando la posizione di gioco è abbastanza semplice
 da poter enumerare ogni possibile mossa e calcolare a priori il miglior risultato possibile per un determinato giocatore, nascono le tablebase, database esaustivi di mosse pre-calcolate delle fasi finale di una 
-partita, ad oggi sono disponibili tablebase complete fino a 7 pezzi presenti sulla scacchiera,questo significa che, per un numero di pezzi compreso tra 3 e 7, non importa quali o in disposti in quale modo,
+partita, ad oggi sono disponibili tablebase complete fino a 7 pezzi presenti sulla scacchiera, questo significa che, per un numero di pezzi compreso tra 3 e 7, non importa quali o in disposti in quale modo,
 è possibile conoscere da subito l'esito della partita (presupponendo un gioco perfetto).
