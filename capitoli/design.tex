@@ -11,7 +11,7 @@
 
 \subsection{Introduzione} %\label{1sec:scopo}
 Il primo passo dello sviluppo di un motore scacchistico è decidere come si vuole rappresentare
-la scacchiera , si tratta di una scelta fondamentale, non solo perché in seguito ci permetterà
+la scacchiera ,come rappresentare la scacchiera si tratta di una scelta fondamentale, non solo perché in seguito ci permetterà
 di testare le funzioni che andremo a implementare, ma anche perché è nella scacchiera che , generalmente,
 viene conservato lo stato generale della partita.\footnote{per stato di una partita si intendono informazioni come
     informazioni su chi ha diritto di muovere, i permessi di arrocco,lo stato della regola delle 50 mosse etc}
@@ -62,8 +62,8 @@ marcata con uno 0, la bitboard che codifica questa informazione sarà quindi la 
 \subsubsection{Piece-Sets}
 Rappresentazione con set con un bit per ogni pezzo dentro una parola a 32 bit o 2 parole a 16 bit per ogni lato,
 i Piece-sets hanno  delle somiglianze con le bitboards, ma ogni  bit del set non è   direttamente correlato ad una casella,
-ma ad un indice  dentro ad una  piece-list. Spesso la posizione del bit nella parola di un  piece-set  implica
-, di che tipo e colore il pezzo è, mentre le  bitboards solitamente mantengono set distinti per pezzi diversi.
+bensì ad un indice  dentro ad una  piece-list. Spesso la posizione del bit nella parola di un  piece-set  implica
+di che tipo e colore il pezzo è, mentre le bitboards solitamente mantengono set distinti per pezzi diversi.
 
 
 
@@ -101,9 +101,9 @@ come la 8x8 di cui è un derivativo, può essere usata per accedere in maniera e
 
 
 \subsubsection{Rappresentazione dei pezzi}
-Una volta scelto il tipo di rappresentazione della scacchiera si può iniziare a pensare alla rappresentazione dei pezzi,
-anche se può sembrare controintuitivo i pezzi non hanno bisogno di una struttura elaborata, la generazione delle possibili
-mosse verrà gestita nella move generation ed il loro spostamento all'interno della scacchiera verrà gestito da una funzione monolitica, in grado di distinguere autonomamente i pezzi, solitamente chiamata
+Una volta scelto il tipo di rappresentazione della scacchiera si può iniziare a pensare alla rappresentazione dei pezzi.
+\\Anche se può sembrare controintuitivo i pezzi non hanno bisogno di una struttura elaborata, in quanto la generazione delle possibili
+mosse verrà gestita in una funzione di move generation, trattata nel paragrafo \ref{move generation}, che gestirà in maniera autonoma la logica necessaria ed il loro spostamento all'interno della scacchiera verrà gestito da una funzione indipendente, in grado di distinguere autonomamente i pezzi, solitamente chiamata
 MakeMove, per i pezzi quindi abbiamo bisogno di una
 rappresentazione semplice, di facile interpretazione e che occupi poco spazio.\\Rappresentazioni molto comuni sono quella
 tramite interi, dove ad ogni tipo di pezzo viene assegnato un numero che funge da identificativo univoco e quella tramite
@@ -126,9 +126,10 @@ pedoni,pezzi scorrevoli (alfieri,torri,regine) e non scorrevoli(re e cavalli).
 
 \subsubsection{Pedoni}
 Il pedone muove solo in avanti, mai indietro o di lato e può avanzare  di due caselle se è la prima volta che viene mosso,altrimenti può avanzare solo di una.
-\\Il un pedone mangia un pezzo avversario spostandosi diagonalmente di una casella,sempre soltanto in avanti, o a destra o a sinistra, se un pedone raggiunge la traversa finale della scacchiera rispetto alla sua direzione di movimento
-allora viene promosso, diventa quindi,a scelta del giocatore che possiede la pedina, uno qualsiasi degli altri pezzi  (ad eccezione del re).
-In un approccio basato su board 8x8 o 12x10 possiamo calcolare le possibili mosse del pedone affidandoci a un flag che rappresentano la possibilità di effettuare catture en passant e controllare la possibilità 
+\\Il un pedone mangia un pezzo avversario spostandosi diagonalmente di una casella, sempre soltanto in avanti, o a destra o a sinistra, se un pedone raggiunge la traversa finale della scacchiera rispetto alla sua direzione di movimento
+allora viene promosso, diventa quindi,a scelta del giocatore che possiede la pedina, uno qualsiasi degli altri pezzi (ad eccezione del re).
+In un approccio basato su board 8x8 o 12x10 possiamo calcolare le possibili mosse del pedone affidandoci a un flag che rappresentano la possibilità di effettuare catture en passant\footnote{
+Una cattura en passant è un particolare tipo di cattura effettuabile da un pedone, si tratta della cattura di un pedone che ha mosso di 2 caselle da parte di un pedone del colore opposto come se avesse mosso di una sola, il pedone che cattura in en passant quindi si sposta su una casella ma "mangia" una pedina presente in un altra casella, questo motivo, ed il fatto che la possibilità di effettuare la mossa è influenzata dal movimento del pedone avversario, rendono l'en passant un tipo di mossa unico.} e controllare la possibilità 
 di muovere di 2 caselle e di promozione basandoci sulla posizione di partenza del pedone,le caselle di arrivo possibili sono a quel punto calcolabili sommando alla casella di partenza degli offset prefissati.
 
 
@@ -149,7 +150,7 @@ L'approccio con le bitboard magiche consiste nell'assegnare ad ogni pezzo scorre
  per il valore individuato dalla posizione dei pezzi bloccanti sulla scacchiera, ottenuto settando ad 1 ogni pezzo che per primo blocca il movimento di un pezzo in una data direzione di spostamento , come 
  visibile nelle  figure \ref{aaa} e \ref{bbb}.\\  
 Questa moltiplicazione darà luogo ad un indice con il quale accedere ad un archivio di bitboard di 
-attacco\footnote{bitboard che segnala con dei bit ad 1 quali caselle il pezzo può attaccare} pre-calcolate, si tratta di una soluzione meno efficiente rispetto alle bitboard che si basano sull'utilizzo di pext
+attacco\footnote{bitboard che segnala con dei bit ad 1 quali caselle il pezzo può attaccare} pre-calcolate, si tratta di una soluzione che richiede più cicli di cpu e risulta quindi meno efficiente rispetto alle bitboard che si basano sull'utilizzo dell'istruzione hardware pext per generare l'indice
 e va utilizzata solo in caso di architetture che non supportano nativamente il set di istruzioni BMI2.
 
 
@@ -173,13 +174,11 @@ e va utilizzata solo in caso di architetture che non supportano nativamente il s
 
 
 \subsubsection{PEXT Bitboards}
-Una bitboard pext funziona in maniera simile ad una bitboard magica,utilizza il valore individuato dalla posizione dei pezzi bloccanti sulla scacchiera sulla bitboard per generare un indice da usare per accedere ad una
-bitboard di attacco,la differenza sostanziale però è nell'approccio, una bitboard pext, come intuibile dal nome, utilizza l' istruzione pext introdotta nel set di istruzioni BMI2 da intel sui processori haswell,e con 
-la serie 5000 dei processori ryzen da AMD,si tratta di un'istruzione che ,dato un input ed una maschera,trasferisce i bit dell'input individuati dalla maschera,in ordine contiguo e da destra a sinistra.
+Una bitboard pext funziona in maniera simile ad una bitboard magica, utilizza il valore individuato dalla posizione dei pezzi bloccanti sulla scacchiera sulla bitboard per generare un indice da usare per accedere ad una
+bitboard di attacco, la differenza sostanziale però è nell'approccio, una bitboard pext, come intuibile dal nome, utilizza l' istruzione pext introdotta nel set di istruzioni BMI2 da intel sui processori haswell, e con 
+la serie 5000 dei processori ryzen da AMD, si tratta di un'istruzione che , dato un input ed una maschera, trasferisce i bit dell'input individuati dalla maschera, in ordine contiguo e da destra a sinistra.
 Con l'istruzione pext, usando una bitboard che rappresenta la scacchiera come input e la posizione dei pezzi bloccanti come maschera, si può ottenere un indice per la hash table delle bitboard di attacco,il tutto viene eseguito in un solo ciclo 
 di cpu e risulta quindi molto più efficiente di un approccio con bitboard magiche.
-
-
 
 
 \subsection{Perft}
@@ -198,28 +197,29 @@ o similmente può essere utilizzata per testare la rapidità di diversi approcci
 
 
 \section{Ricerca} \label{ricerca}
-Una volta generate tutte le possibili mosse nella fase di move generation si entra nella fase di ricerca,che consiste nel eseguire diversi sottoinsiemi delle possibili mosse e valutare
-lo stato della scacchiera per trovare le mosse che forniscono il risultato finale migliore. Possiamo dire in maniera più tecnica che , essendo il gioco degli scacchi un gioco
-a 2 giocatori,a informazione perfetta e a somma zero, la ricerca implica l'attraversamento e l'ottimizzazione di un albero mini-max contenente le possibili posizioni di gioco.
-Negli scacchi computazionali esistono due approcci alla progettazione di un algoritmo di ricerca,si può effettuare una ricerca a tappeto limitando la profondità
-della stessa per far si che i calcoli finiscano in tempi accettabili ,col rischio di sottovalutare implicazioni future di determinate mosse,o focalizzarsi su particolari mosse e quindi
+Una volta generate tutte le possibili mosse nella fase di move generation si entra nella fase di ricerca, che consiste nel eseguire diversi sottoinsiemi delle possibili mosse e valutare
+lo stato della scacchiera per trovare le mosse che forniscono il risultato finale migliore. Possiamo dire in maniera più tecnica che, essendo il gioco degli scacchi un gioco
+a 2 giocatori, a informazione perfetta e a somma zero, la ricerca implica l'attraversamento e l'ottimizzazione di un albero mini-max contenente le possibili posizioni di gioco.
+Negli scacchi computazionali esistono due approcci alla progettazione di un algoritmo di ricerca: si può effettuare una ricerca a tappeto limitando la profondità
+della stessa per far si che i calcoli finiscano in tempi accettabili, col rischio di sottovalutare implicazioni future di determinate mosse, o focalizzarsi su particolari mosse e quindi
 rami dell'albero di ricerca nel tentativo di dare maggiore spazio alle mosse migliori (sulla base dell'euristica scelta per determinare come sia fatta una mossa "migliore"), rischiando
-quindi di eliminare a priori mosse con dei risvolti successivi molto promettenti,l'approccio adottato da quasi tutti i motori scacchistici moderni è il primo.
+quindi di eliminare a priori mosse con dei risvolti successivi molto promettenti, l'approccio adottato da quasi tutti i motori scacchistici moderni è il primo.
 
 \subsubsection{Algoritmi di ricerca}
-Data l'impossibilità di esplorare l'intero spazio dell'albero di ricerca che codifica il gioco degli scacchi, è necessario fare affidamento ad algoritmi in
+Data l'impossibilità di esplorare l'intero spazio dell'albero di ricerca che codifica il gioco degli scacchi in quanto l'elevato numero di nodi richiederebbe una quantità di spazio superiore
+a quella degli atomi dell'universo ed una quantità di tempo superiore all'età dello stesso, è necessario fare affidamento ad algoritmi in
 grado di ridurre il numero di nodi dell'albero, l'approccio più utilizzato è quello di una ricerca minimax con potatura alfa-beta ad approfondimento iterativo.
 
 
 \subsubsection{Minimax e negamax}
-L'algoritmo minimax\cite{itwiki:125837390} è un algoritmo ricorsivo per la ricerca della mossa migliore in una determinata situazione, si basa su una funzione di valutazione posizionale che assegna ad una posizione (rappresentante un possibile stato del gioco) un punteggio,
+L'algoritmo minimax\cite{itwiki:125837390} è un algoritmo ricorsivo per la ricerca della mossa migliore in una determinata situazione. Esso si basa su una funzione di valutazione posizionale che assegna ad una posizione (rappresentante un possibile stato del gioco) un punteggio,
 che indica quanto è desiderabile per il giocatore raggiungere quella posizione.
 L'obbiettivo finale è la minimizzazione (mini) del massimo guadagno del giocatore avversario (max),
 l'algoritmo minimax quindi  assegna un valore ad ogni mossa , proporzionale a quanto essa diminuisce il valore della posizione per l'altro giocatore,
 l'effettivo valore che viene assegnato dipende dalla funzione di valutazione adottata,\emph{questo argomento verrà trattato successivamente nella parte dedicata alla valutazione}.
 L'algoritmo minimax è in grado di formulare una strategia perfetta per giochi abbastanza semplici da poter permettere 
 la valutazione dell'intero albero di ricerca, per giochi complessi come gli scacchi però questo non è possibile o lo è 
-solo nelle fasi finali e ,in generale, si può solo calcolare una stima della probabilità che una data mossa porti alla vittoria di uno dei giocatori.
+solo nelle fasi finali e, in generale, si può solo calcolare una stima della probabilità che una data mossa porti alla vittoria di uno dei giocatori.
 Il calcolo di questa stima può essere migliorato se è possibile fornire una funzione di valutazione euristica che
 valuti le posizioni non terminali del gioco senza dover conoscere tutte le mosse successive: in questo caso si possono
 considerare solo un certo numero di mosse future. Questo numero è detto "profondità" dell'algoritmo ed è misurato
@@ -228,7 +228,7 @@ NP completa, il che lo rende poco pratico per ottenere una soluzione definitiva 
 mantenendo la correttezza dei risultati, adottando la \textbf{potatura alfa-beta}.
 \\Negamax è una variante dell'algoritmo minimax che si basa sulla nozione che $max(a,b)= -min(-a,-b)$ per semplificare l'implementazione dell'algoritmo minimax,
 in pratica, il valore di una posizione per il giocatore A è l'opposto di segno di quello del giocatore B, quindi il giocatore che muove deve puntare a massimizzare il valore negato della posizione
-dopo la sua mossa, questo tipo di ragionamento è applicabile sia per il giocatore minimizzante che per quello massimizzante, questo modo di operare permette di non dover implementare due funzioni diverse per i due agenti 
+dopo la sua mossa. Questo tipo di ragionamento è applicabile sia per il giocatore minimizzante che per quello massimizzante, questo modo di operare permette di non dover implementare due funzioni diverse per i due agenti 
 e di ridurre il tutto ad un solo algoritmo.
 
 
@@ -261,11 +261,11 @@ Le principali euristiche ottenute dalle visite precedenti prendono il nome di \t
   una posizione con una valutazione  superiore a beta, significa che in fasi precedenti della ricerca è stato trovato un percorso utilizzabile 
    dall'avversario che risulta in un punteggio finale peggiore per l'avversario,questo significa che,supponendo un gioco
    perfetto da parte di entrambi i giocatori, il giocatore avversario non finirà mai nel sotto-albero contente tale mossa e che quindi si 
-   può procedere all potatura},si salvano generalmente un paio di mosse killer per ogni profondità dell'albero di ricerca e nelle successive iterazioni
+   può procedere all potatura}. Si salvano generalmente un paio di mosse killer per ogni profondità dell'albero di ricerca e nelle successive iterazioni
    verranno eseguite con una priorità maggiore rispetto alle altre mosse per accelerare la ricerca. 
   \item \textbf{euristica storica}: l'euristica storica è un euristica che si basa sul numero di miglioramenti di alfa che quella mossa ha causato
-   durante la ricerca,si tratta nuovamente di un tipo di mossa che non cattura nessun pezzo ed inoltre non deve produrre un taglio beta
-  (verrebbe altrimenti classificata come mossa killer), è generalmente conservata come coppia pezzo/casella in cui il pezzo si muove 
+   durante la ricerca. Si tratta nuovamente di un tipo di mossa che non cattura nessun pezzo ed inoltre non deve produrre un taglio beta
+  (verrebbe altrimenti classificata come mossa killer). È generalmente conservata come coppia pezzo/casella in cui il pezzo si muove 
   ed anch'essa  nelle successive iterazioni verrà eseguite con una priorità maggiore rispetto alle altre mosse per accelerare la ricerca. 
 \end{itemize} 
 euristiche come quella storica o quella killer fanno a loro volta parte di un problema più grande e fondamentale per gli scacchi computazionali 
@@ -283,8 +283,8 @@ diverse metriche per selezionare mosse da provare prima delle altre.Un esempio d
 \item mosse killer
 \item mosse che non catturano pezzi ordinate secondo l'euristica storica.
 \end{itemize} 
-È inoltre possibile utilizzare euristiche per ordinare tra di loro mosse appartenenti allo stesso livello,non è raro infatti optare di ordinare le catture da più promettenti a meno promettenti,
-l'euristica principale per stabilire quanto una cattura è definibile promettente prende il nome di \textbf{mvv-lva} o in forma estesa \textbf{most valuable victim / least valuable attacker} ,l'obbiettivo è quello di identificare 
+È inoltre possibile utilizzare euristiche per ordinare tra di loro mosse appartenenti allo stesso livello. Non è raro infatti optare di ordinare le catture da più promettenti a meno promettenti.
+L'euristica principale per stabilire quanto una cattura è definibile promettente prende il nome di \textbf{mvv-lva} o in forma estesa \textbf{most valuable victim / least valuable attacker} ,l'obbiettivo è quello di identificare 
 il pezzo di minore importanza che può attaccare il pezzo di maggiore importanza,ai due estremi troviamo un pedone in grado di catturare una regina ed una regina che viene scomodata per catturare un semplice pedone,
 l'ordinamento preferisce intrinsecamente il tipo del pezzo attaccante, quindi tutte le mosse di cattura effettuabili da un pedone verranno considerate prima di quelle di un cavallo che a loro volta verranno considerate
 prima di quelle di un alfiere e cosi via fino ad arrivare ad una regina. 
@@ -299,7 +299,7 @@ Immaginiamo di trovarci in una posizione di gioco immaginaria chiamata k , e di 
 chiameremo k+5 la migliore delle posizioni raggiunte da queste ricerca sulla base della funzione di valutazione,è possibile che
 l'avversario abbia una mossa con la quale può ribaltare istantaneamente la bontà della posizione k+5, trasformandola quindi in una posizione
 "k+6" molto più sfavorevole.\\
-Un esempio classico di questo problema in ambiente scacchistico è quello di una ricattura: immaginiamo 
+Un esempio classico di questo problema in ambiente scacchistico è quello di una ricattura\footnote{Una ricattura si ha quando, in risposta ad una cattura avversaria, si cattura il pezzo attaccante dell'avversario.}: immaginiamo 
 di effettuare una ricerca più superficiale possibile, a profondità 1, in questo stato qualsiasi cattura terminerà con un miglioramento di punteggio 
 per la posizione del giocatore che muove (in quanto ha appena catturato un pezzo avversario),supponiamo quindi ad esempio di aver catturato un pedone con una regina,
 l'effetto orizzonte non ci permette di vedere a profondità 2 o oltre le conseguenze di questa azione,qualora quel pedone fosse stato 
@@ -316,9 +316,9 @@ ricerca non è particolarmente impegnativa (rispetto alla ricerca alfa-beta madr
 
 
 \subsubsection{Ricerca a variazione principale}
-La Ricerca a variazione principale, chiamata anche \textbf{PVS (principal variation search)}, conosciuta anche come NegaScout, è un algoritmo di tipo negamax che può essere più veloce della potatura alfa-beta 
+La Ricerca a variazione principale, chiamata anche \textbf{PVS (Principal Variation Search)}, conosciuta anche come NegaScout, è un algoritmo di tipo negamax che può essere più veloce della potatura alfa-beta 
 in quanto non considera  mai nessun nodo che può essere potato dalla potatura alfa-beta, PVS si base sull'assunzione che le mosse siano state ordinate in maniera corretta e produce un numero maggiore di tagli
-dando per scontato che il primo nodo esplorato sia il migliore di quelli possibili,una ricerca di questo tipo è molto più veloce di una ricerca che si preoccupa che una delle possibili mosse restanti possa essere 
+dando per scontato che il primo nodo esplorato sia il migliore di quelli possibili. Una ricerca di questo tipo è molto più veloce di una ricerca che si preoccupa che una delle possibili mosse restanti possa essere 
 buona, se però viene trovato un nodo migliore allora è necessario ri-effettuare una ricerca normale alfa-beta su quel nodo, in pratica quindi, per ogni nodo ordinato in maniera sbagliata si deve ripetere la ricerca, e 
 con abbastanza ricerche ripetute diventa più lento di alfa-beta pur esplorando lo stesso numero di nodi , è per questo che la ricerca ha bisogno di un ordinamento il più accurato possibile.
 In termini pratici una ricerca PVS si realizza utilizzando una ricerca alfa-beta ma con una finestra nulla al posto dei normali parametri alfa e beta,all'interno di un contesto negamax una finestra nulla è un 
@@ -333,12 +333,12 @@ la posizione finale vedrà in ogni caso un pedone bianco su a4 e su d4 ed un ped
 \\ Una \textbf{tabella di trasposizione} è una tabella hash che conserva i risultati di ricerche precedentemente effettuate
 su una data posizione, ogni volta che si raggiunge una nuova (per l'iterazione locale del processo di ricerca) posizione, si cerca all'interno di questa tavola dei risultati precedenti associati a tale posizione, in caso di riscontro positivo
 vengono prelevati i dati risalenti all'ultima ricerca effettuata, spesso composti da posizione, profondità e punteggio finale della ricerca.
-\\Per individuare una posizione all'interno della tabella si utilizza una chiave hash in grado di codificare univocamente una posizione su una scacchiera, per la generazione di queste chiavi una tecnica molto diffusa prende il nome di hashing zobrist, 
-nell'hashing zobrist si assegna una chiave casuale di 64 bit ad ogni combinazione pezzo-posizione, ad ogni possibile insieme di permessi di arrocco, ad ogni possibile casella di en passant ed ai due lati di gioco possibili (bianco e nero),
-si parte poi da una chiave vuota e man mano vengono inseriti tramite XOR bit a bit, le chiavi dei pezzi presenti sulla scacchiera corrispondenti alle posizioni in cui si trovano, degli attuali permessi di arrocco
-del lato giocante e dell'eventuale casella di enpassant,data però data l'impossibilità di contenere tutte le possibili chiavi all'interno di una tabella hash,si utilizzano metodi per ridurre l'universo delle chiavi,
-il più banale e comune rappresentato dall'effettuare il modulo della chiave zobrist originale col numero di istanze massime nella tabella,per via di questa limitazione è possibile che avvengano delle collisioni,
-in quanto due chiavi zobrist diverse possono generare la stessa chiave hash post modulo,per ovviare a questo problema è necessario controllare che la chiave zobrist corrisponda a quella salvata nella tabella di 
+\\Per individuare una posizione all'interno della tabella si utilizza una chiave hash in grado di codificare univocamente una posizione su una scacchiera. Per la generazione di queste chiavi una tecnica molto diffusa prende il nome di hashing zobrist. 
+Nell'hashing zobrist si assegna una chiave casuale di 64 bit ad ogni combinazione pezzo-posizione, ad ogni possibile insieme di permessi di arrocco, ad ogni possibile casella di en passant ed ai due lati di gioco possibili (bianco e nero).
+Si parte poi da una chiave vuota e man mano vengono inseriti tramite XOR bit a bit, le chiavi dei pezzi presenti sulla scacchiera corrispondenti alle posizioni in cui si trovano, degli attuali permessi di arrocco
+del lato giocante e dell'eventuale casella di enpassant. Data però data l'impossibilità di contenere tutte le possibili chiavi all'interno di una tabella hash, si utilizzano metodi per ridurre l'universo delle chiavi,
+il più banale e comune rappresentato dall'effettuare il modulo della chiave zobrist originale col numero di istanze massime nella tabella. Per via di questa limitazione è possibile che avvengano delle collisioni,
+in quanto due chiavi zobrist diverse possono generare la stessa chiave hash post modulo, per ovviare a questo problema è necessario controllare che la chiave zobrist corrisponda a quella salvata nella tabella di 
 trasposizione ad ogni accesso, ed in caso contrario effettuare la sovrascrittura dell'istanza precedentemente inserita.
 
 
@@ -350,7 +350,7 @@ era in grado di restituire un numero che ne rappresentasse la bontà, in realtà
 da uno dei migliori al mondo, per questo è necessario, quando si lavora alla formulazione di una funzione del genere,lavorare in maniera graduale e testare ampiamente ogni modifica che si apporta.
 
 \subsubsection {hand-crafted evaluation}
-Si definisce hand-crafted evaluation, abbreviata in HCE e traducibile con "valutazione fatta a mano",una funzione di valutazione che considera diversi aspetti della posizione ed assegna ad ognuno di essi un peso 
+Si definisce \emph{hand-crafted evaluation}, abbreviata in HCE e traducibile con "valutazione fatta a mano",una funzione di valutazione che considera diversi aspetti della posizione ed assegna ad ognuno di essi un peso 
 arbitrario deciso dallo sviluppatore (da qui il termine hand-crafted), si tratta della metodologia classica per la scrittura di una funzione di valutazione ed ancora oggi si dimostra estremamente popolare in  
 motori di tutti i livelli, anche se sta man mano venendo soppiantata dall'utilizzo di reti neurali, come constatabile nella crème de la crème dei motori scacchistici (Stockfish, Lc0,Dragon), l'approccio più comune
 nella realizzazione di una funzione di valutazione HCE consiste nell'effettuare una combinazione lineare di diverse euristiche indipendenti, ognuna riguardante un aspetto più o meno fondamentale di una posizione.
@@ -370,7 +370,7 @@ con un massimo possibile di 8 mosse e non ad un angolo della scacchiera, dove al
 \end{figure}
 
 L'ultima euristica che andremo a considerare,in quanto è impossibile elencarle tutte ed è anche controproducente in quanto la natura scacchistica delle stesse richiede conoscenze che non possono essere facilmente riassunte
-, riguarda la posizione dei pedoni,un pedone può godere di tre caratteristiche in grado di cambiarne il valore, un pedone può essere infatti  un pedone passato, doppiato o isolato.\\
+riguarda la posizione dei pedoni. Un pedone può godere di tre caratteristiche in grado di cambiarne il valore, un pedone può essere infatti  un pedone passato, doppiato o isolato.\\
 Un pedone passato è un pedone che non può essere contrastato nella marcia in avanti da un pedone avversario sia sulla stessa colonna, sia a destra o a sinistra di essa,questo tipo di pedone quindi può facilmente 
 minacciare un'avanzata verso la fila posteriore nemica con lo scopo di promuovere,un pedone passato è un pezzo particolarmente utile nel fine gioco ed in quanto tale gli viene conferito un punteggio migliore
 rispetto a quello di un normale pedone .\\ 
