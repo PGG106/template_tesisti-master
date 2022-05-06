@@ -11,7 +11,7 @@
 
 \subsection{Introduzione} %\label{1sec:scopo}
 Il primo passo dello sviluppo di un motore scacchistico è decidere come si vuole rappresentare
-la scacchiera ,come rappresentare la scacchiera si tratta di una scelta fondamentale, non solo perché in seguito ci permetterà
+la scacchiera ,come rappresentare la scacchiera. Si tratta di una scelta fondamentale, non solo perché in seguito ci permetterà
 di testare le funzioni che andremo a implementare, ma anche perché è nella scacchiera che , generalmente,
 viene conservato lo stato generale della partita.\footnote{per stato di una partita si intendono informazioni come
     informazioni su chi ha diritto di muovere, i permessi di arrocco,lo stato della regola delle 50 mosse etc}
@@ -38,12 +38,11 @@ o liste esterne.
 Una Bitboard è una struttura dati specifica per i giochi da tavolo,
 si tratta in sostanza  di una struttura dati in grado di immagazzinare lo stato di ogni casella della
 scacchiera all'interno di una parola\footnote{Una parola è un gruppo di bit di una determinata dimensione che sono gestiti come unità dal set di istruzioni o dall'hardware di un processore} di 64 bit\cite{Bitboard}.
-\\Vediamo un esempio pratico, immaginiamo di avere una scacchiera che si trova nello stato di default di inizio
-partita come nella figura \ref{scacchiera}, una bitboard tipica è quella che ci permette di sapere in quali caselle è presente un pedone
-nero,per costruirla, operando casella per casella, ci poniamo una domanda "in questa casella
-è presente un pedone nero?" se si allora quella casella viene marcata con un 1 , altrimenti viene
-marcata con uno 0, la bitboard che codifica questa informazione sarà quindi la parola di 64 bit 00000000 11111111 00000000 00000000 00000000
-00000000 00000000 00000000 come si può vedere in \ref{scacchiera}.:
+\\Vediamo un esempio pratico: Immaginiamo di avere una scacchiera che si trova nello stato di default di inizio partita come nella figura 2.2. Una bitboard tipica ci permette di sapere in quali caselle è presente un determinato pezzo (es. un pedone nero). Per costruirla,
+operando casella per casella, ci poniamo la seguente domanda: “In questa casella è presente un pedone nero?" se si allora quella casella viene marcata con un 1, altrimenti viene marcata con uno 0. 
+Il risultato di questa traduzione diventa in questo caso la parola di 64 bit: 00000000 11111111 00000000 00000000 00000000
+00000000 00000000 00000000 come si può vedere in \ref{scacchiera}.
+
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth/2] {scacchiera.png}
@@ -81,9 +80,9 @@ Il nome deriva dall'associazione di ogni indice al concetto di "indirizzo" di un
 comuni del concetto di Mailbox sono la 8x8 Board e la 10x12 Board.
 
 \subsubsection{8x8 Board}
-Una board 8x8, è una rappresentazione pezzocentrica consistente  in un array mono o bidimensionale di bytes o interi, contenenti rappresentazioni codificate
+Una board 8x8, è una rappresentazione pezzocentrica consistente in un array mono o bidimensionale di bytes o interi, contenenti rappresentazioni codificate
 per i pezzi e per la casella vuota, con i due indici ricavati o dalla coppia traversa/colonna che identifica la casella sulla scacchiera ,
-o più comunemente  da 0 a 63, uno per ogni casella della scacchiera.
+o più comunemente da 0 a 63, uno per ogni casella della scacchiera conservata in un array monodimensionale.
 Questo tipo di rappresentazione è usata spesso come rappresentazione ridondante all'interno di programmi che utilizzano bitboards
 per individuare se e quali pezzi sono presenti su una casella in maniera efficiente.
 
@@ -103,8 +102,8 @@ come la 8x8 di cui è un derivativo, può essere usata per accedere in maniera e
 \subsubsection{Rappresentazione dei pezzi}
 Una volta scelto il tipo di rappresentazione della scacchiera si può iniziare a pensare alla rappresentazione dei pezzi.
 \\Anche se può sembrare controintuitivo i pezzi non hanno bisogno di una struttura elaborata, in quanto la generazione delle possibili
-mosse verrà gestita in una funzione di move generation, trattata nel paragrafo \ref{move generation}, che gestirà in maniera autonoma la logica necessaria ed il loro spostamento all'interno della scacchiera verrà gestito da una funzione indipendente, in grado di distinguere autonomamente i pezzi, solitamente chiamata
-MakeMove, per i pezzi quindi abbiamo bisogno di una
+mosse verrà gestita in una funzione di move generation, trattata nel paragrafo \ref{move generation}, ed il loro spostamento all'interno della scacchiera verrà gestito da una funzione indipendente, in grado di distinguere autonomamente i pezzi, solitamente chiamata
+MakeMove. Per i pezzi quindi abbiamo bisogno di una
 rappresentazione semplice, di facile interpretazione e che occupi poco spazio.\\Rappresentazioni molto comuni sono quella
 tramite interi, dove ad ogni tipo di pezzo viene assegnato un numero che funge da identificativo univoco e quella tramite
 caratteri, dove ad ogni tipo di pezzo viene assegnato un carattere che lo identifica (e che in linguaggi come il C è funzionalmente identica a quella per interi).
@@ -129,8 +128,29 @@ Il pedone muove solo in avanti, mai indietro o di lato e può avanzare  di due c
 \\Il un pedone mangia un pezzo avversario spostandosi diagonalmente di una casella, sempre soltanto in avanti, o a destra o a sinistra, se un pedone raggiunge la traversa finale della scacchiera rispetto alla sua direzione di movimento
 allora viene promosso, diventa quindi,a scelta del giocatore che possiede la pedina, uno qualsiasi degli altri pezzi (ad eccezione del re).
 In un approccio basato su board 8x8 o 12x10 possiamo calcolare le possibili mosse del pedone affidandoci a un flag che rappresentano la possibilità di effettuare catture en passant\footnote{
-Una cattura en passant è un particolare tipo di cattura effettuabile da un pedone, si tratta della cattura di un pedone che ha mosso di 2 caselle da parte di un pedone del colore opposto come se avesse mosso di una sola, il pedone che cattura in en passant quindi si sposta su una casella ma "mangia" una pedina presente in un altra casella, questo motivo, ed il fatto che la possibilità di effettuare la mossa è influenzata dal movimento del pedone avversario, rendono l'en passant un tipo di mossa unico.} e controllare la possibilità 
-di muovere di 2 caselle e di promozione basandoci sulla posizione di partenza del pedone,le caselle di arrivo possibili sono a quel punto calcolabili sommando alla casella di partenza degli offset prefissati.
+Una cattura en passant è un particolare tipo di cattura effettuabile da un pedone. Si tratta della cattura di un pedone che ha mosso di 2 caselle da parte di un pedone del colore opposto che lo tratta come se avesse mosso di una casella sola. Il pedone che cattura in en passant quindi si sposta su una casella ma "mangia" una pedina presente in un altra casella, questo motivo, ed il fatto che la possibilità di effettuare la mossa è influenzata dal movimento del pedone avversario, rendono l'en passant un tipo di mossa unico.} di cui vediamo un esempio
+nelle figure \ref{preenpas} e \ref{postenpas} e controllare la possibilità 
+di muovere di 2 caselle e di promozione basandoci sulla posizione di partenza del pedone, le caselle di arrivo possibili sono a quel punto calcolabili sommando alla casella di partenza degli offset prefissati.
+
+
+\begin{figure}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{pre_enpas.png} % first figure itself
+        \caption{posizione d'esempio dove è possibile catturare en passant}
+        \label{preenpas}
+
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{post_enpas.png} % second figure itself
+        \caption{posizione della figura \ref{preenpas} dopo aver catturato en passant }
+        \label{postenpas}
+    \end{minipage}
+\end{figure}
+
+
 
 
 
@@ -186,12 +206,13 @@ Perft è una funzione di debugging che attraversa l'albero delle mosse legali ge
 Il numero viene poi comparato con dei valori noti per controllare la presenza di bug nella nostra generazione delle mosse.
 Una funzione di Perft può essere anche utilizzata per testare le prestazioni di una stessa funzione di move generation su macchine diverse ,confrontando il tempo impiegato per la sua esecuzione su ognuna delle macchine
 o similmente può essere utilizzata per testare la rapidità di diversi approcci alla generazione delle mosse, ne possiamo osservare un esempio nella figura \ref{perftscore}.
+Esiste una variante del Perft che divide le mosse per sottoalbero di appartenenza per facilitare il debugging e prende il nome di Perft/divide.
 
 
 \begin{figure}[H]
     \centering
     \includegraphics{perftscore.png}
-    \caption{Output tipico di una funzione di perft,il numero di nodi viene diviso per sottoalbero di appartenenza per facilitare il debugging, il numero di nodi al secondo (32.27M) può essere utilizzato come metrica prestazionale.}
+    \caption{Output tipico di una funzione di Perft/divide, il numero di nodi al secondo (32.27M) può essere utilizzato come metrica prestazionale.}
     \label{perftscore}
 \end{figure}
 
@@ -291,12 +312,12 @@ prima di quelle di un alfiere e cosi via fino ad arrivare ad una regina.
 
 
 \subsubsection{Effetto orizzonte e ricerca di quiescenza}
-L'effetto orizzonte è un problema che affligge tutti gli algoritmi di ricerca con profondità limitata,l'orizzonte è la divisione 
-tra le mosse considerate dal nostro algoritmo di ricerca e quelle  che si trovano ad una profondità maggiore rispetto a quella raggiunta dal nostro algoritmo 
+L'effetto orizzonte è un problema che affligge tutti gli algoritmi di ricerca con profondità limitata, l'orizzonte è la divisione 
+tra le mosse considerate dal nostro algoritmo di ricerca e quelle che si trovano ad una profondità maggiore rispetto a quella raggiunta dal nostro algoritmo 
 ed il problema nasce dall'impossibilità di poter analizzare le conseguenze delle mosse che si ritengono forti agli ultimi livelli di profondità, in quanto dovendo fermarci con la ricerca,
 non possiamo indagare eventuali risposte avversarie.\\
-Immaginiamo di trovarci in una posizione di gioco immaginaria chiamata k , e di cercare tutte le possibili posizioni derivanti da k con una profondità pari a 5,
-chiameremo k+5 la migliore delle posizioni raggiunte da queste ricerca sulla base della funzione di valutazione,è possibile che
+Immaginiamo di trovarci in una posizione di gioco immaginaria chiamata k, e di cercare tutte le possibili posizioni derivanti da k con una profondità pari a 5,
+chiameremo k+5 la migliore delle posizioni raggiunte da queste ricerca sulla base della funzione di valutazione. È possibile che
 l'avversario abbia una mossa con la quale può ribaltare istantaneamente la bontà della posizione k+5, trasformandola quindi in una posizione
 "k+6" molto più sfavorevole.\\
 Un esempio classico di questo problema in ambiente scacchistico è quello di una ricattura\footnote{Una ricattura si ha quando, in risposta ad una cattura avversaria, si cattura il pezzo attaccante dell'avversario.}: immaginiamo 
@@ -372,10 +393,10 @@ con un massimo possibile di 8 mosse e non ad un angolo della scacchiera, dove al
 L'ultima euristica che andremo a considerare,in quanto è impossibile elencarle tutte ed è anche controproducente in quanto la natura scacchistica delle stesse richiede conoscenze che non possono essere facilmente riassunte
 riguarda la posizione dei pedoni. Un pedone può godere di tre caratteristiche in grado di cambiarne il valore, un pedone può essere infatti  un pedone passato, doppiato o isolato.\\
 Un pedone passato è un pedone che non può essere contrastato nella marcia in avanti da un pedone avversario sia sulla stessa colonna, sia a destra o a sinistra di essa,questo tipo di pedone quindi può facilmente 
-minacciare un'avanzata verso la fila posteriore nemica con lo scopo di promuovere,un pedone passato è un pezzo particolarmente utile nel fine gioco ed in quanto tale gli viene conferito un punteggio migliore
-rispetto a quello di un normale pedone .\\ 
-Un pedone doppiato è un pedone che, a seguito di una presa, passa nella fila vicina dove si trova un altro pedone dello stesso colore,si tratta generalmente di una debolezza strutturale di una posizione 
-ed in quanto tale va evitata se non porta a vantaggi sostanziali,spesso quindi si assegna ad ogni pedone doppiato un malus di punteggio.\\
+minacciare un'avanzata verso la fila posteriore nemica con lo scopo di promuovere, un pedone passato è un pezzo particolarmente utile nel fine gioco ed in quanto tale gli viene conferito un punteggio migliore
+rispetto a quello di un normale pedone.\\ 
+Un pedone doppiato è un pedone che, a seguito di una presa, passa nella fila vicina dove si trova un altro pedone dello stesso colore, si tratta generalmente di una debolezza strutturale di una posizione 
+ed in quanto tale va evitata se non porta a vantaggi sostanziali, spesso quindi si assegna ad ogni pedone doppiato un malus di punteggio.\\
 Un pedone isolato è un pedone che nel corso della partita rimane senza pedoni sulle due colonne adiacenti, si tratta quindi di un pedone che non può essere difeso dai pedoni adiacenti e quindi di un pezzo
 facilmente attaccabile per l'avversario, per questo è prassi assegnare ad ogni pedone isolato un malus di punteggio.
 In termini pratici una realizzazione tipica di questa euristica si basa sulla generazione di bitmask statiche che in combinazione con la bitboard dei pedoni saranno in grado di identificare queste tipologie di pedoni.
@@ -383,10 +404,10 @@ In termini pratici una realizzazione tipica di questa euristica si basa sulla ge
 
 
 \section {Libro delle aperture e Tablebase}
-Le mosse iniziali di una partita di scacchi, chiamate nel loro insieme "apertura" posseggono un particolare binomio di caratteristiche, si tratta di mosse che avvengono in posizioni estremamente aperte,con tutti o quasi i pezzi
+Le mosse iniziali di una partita di scacchi, chiamate nel loro insieme "apertura" posseggono un particolare binomio di caratteristiche, si tratta di mosse che avvengono in posizioni estremamente aperte, con tutti o quasi i pezzi
 in gioco e quindi con moltissime possibilità da calcolare, allo stesso tempo si tratta di alcune tra le mosse più studiate in ambito di teoria scacchistica nel corso dei secoli, è prassi quindi quella di evitare che
 il calcolatore elabori da se le prime mosse e far si che si appoggi su un database di mosse di apertura chiamato appunto libro delle aperture, che contiene solitamente aperture che vanno dalle 4 alle 10-11 mosse.
-Seguendo ancora il paradigma di risparmiare al motore parti di calcolo basandosi su mosse precompilate,ma con un caso d'uso diametralmente opposto, ossia quando la posizione di gioco è abbastanza semplice
+Seguendo ancora il paradigma di risparmiare al motore parti di calcolo basandosi su mosse precompilate, ma con un caso d'uso diametralmente opposto, ossia quando la posizione di gioco è abbastanza semplice
 da poter enumerare ogni possibile mossa e calcolare a priori il miglior risultato possibile per un determinato giocatore, nascono le tablebase, database esaustivi di mosse pre-calcolate delle fasi finale di una 
 partita, ad oggi sono disponibili tablebase complete fino a 7 pezzi presenti sulla scacchiera, questo significa che, per un numero di pezzi compreso tra 3 e 7, non importa quali o in disposti in quale modo,
 è possibile conoscere da subito l'esito della partita (presupponendo un gioco perfetto).
