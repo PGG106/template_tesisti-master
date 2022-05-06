@@ -10,16 +10,16 @@
 \section{Rappresentazione della scacchiera e dei pezzi}
 
 \subsection{Introduzione} %\label{1sec:scopo}
-Il primo passo dello sviluppo di un motore scacchistico è decidere come si vuole rappresentare
-la scacchiera ,come rappresentare la scacchiera. Si tratta di una scelta fondamentale, non solo perché in seguito ci permetterà
-di testare le funzioni che andremo a implementare, ma anche perché è nella scacchiera che , generalmente,
-viene conservato lo stato generale della partita.\footnote{per stato di una partita si intendono informazioni come
-    informazioni su chi ha diritto di muovere, i permessi di arrocco,lo stato della regola delle 50 mosse etc}
-\\Inoltre il tipo di codifica può influenzare la rapidità
+
+Il primo passo dello sviluppo di un motore scacchistico è decidere come rappresentare la scacchiera. Si tratta di una scelta fondamentale, non solo perché in seguito ci permetterà
+di testare le funzioni che andremo a implementare, ma anche perché è nella scacchiera che, generalmente,
+viene conservato lo stato generale della partita.\footnote{Per stato di una partita si intendono informazioni come
+quelle su chi ha diritto di muovere, i permessi di arrocco, lo stato della regola delle 50 mosse etc.}
+\\Inoltre, il tipo di codifica può influenzare la rapidità
 e la facilità col quale possiamo accedere alle informazioni sullo stato corrente dei pezzi
-e come vedremo in seguito è in grado di influenzare funzioni come la generazione delle mosse, per questi motivi,
+e, come vedremo in seguito, è in grado di influenzare funzioni come la generazione delle mosse; per questi motivi,
 non è raro per motori scacchistici particolarmente complessi l'utilizzo di più tipi di strutture dati in base
-al tipo di informazione da conservare e all'utilizzo che se ne vuole fare, spesso alternando tra strutture efficienti dal punto di vista computazionale (bitboard) a strutture che permettono l'accesso casuale o facilitano 
+al tipo di informazione da conservare e all'utilizzo che se ne vuole fare, spesso alternando tra strutture efficienti dal punto di vista computazionale (bitboard) e strutture che permettono l'accesso casuale o facilitano 
 operazioni di manipolazione da parte di un programmatore umano (qualsiasi rappresentazione casellocentrica).
 \\Per la rappresentazione di una scacchiera sono chiaramente possibili moltissime scelte, di seguito
 verranno illustrate alcune tra le più famose ed utilizzate.
@@ -29,15 +29,15 @@ Si definisce rappresentazione pezzocentrica, un qualsiasi tipo di rappresentazio
 array o set dei pezzi attualmente presenti sulla scacchiera con annesse le informazioni sulle caselle da essi occupate.
 Le rappresentazioni più comuni sono:
 \subsubsection{Piece-Lists}
-liste o array di ogni pezzo sulla scacchiera, ogni elemento della lista o dell'array associa un pezzo
-alla casella che esso occupa .Le caratteristiche di ogni pezzo (colore,tipo etc)
+Liste o array di ogni pezzo sulla scacchiera: ogni elemento della lista o dell'array associa un pezzo
+alla casella che esso occupa. Le caratteristiche di ogni pezzo (colore, tipo etc.)
 possono essere associate all'indice dell'array in cui si trovano o essere presenti in ulteriori array
 o liste esterne.
 
 \subsubsection{Bitboards}
-Una Bitboard è una struttura dati specifica per i giochi da tavolo,
-si tratta in sostanza  di una struttura dati in grado di immagazzinare lo stato di ogni casella della
-scacchiera all'interno di una parola\footnote{Una parola è un gruppo di bit di una determinata dimensione che sono gestiti come unità dal set di istruzioni o dall'hardware di un processore} di 64 bit\cite{Bitboard}.
+Una Bitboard è una struttura dati specifica per i giochi da tavolo:
+si tratta, in sostanza,  di una struttura dati in grado di immagazzinare lo stato di ogni casella della
+scacchiera all'interno di una parola\footnote{Una parola è un gruppo di bit di una determinata dimensione che sono gestiti come unità dal set di istruzioni o dall'hardware di un processore.} di 64 bit\cite{Bitboard}.
 \\Vediamo un esempio pratico: Immaginiamo di avere una scacchiera che si trova nello stato di default di inizio partita come nella figura 2.2. Una bitboard tipica ci permette di sapere in quali caselle è presente un determinato pezzo (es. un pedone nero). Per costruirla,
 operando casella per casella, ci poniamo la seguente domanda: “In questa casella è presente un pedone nero?" se si allora quella casella viene marcata con un 1, altrimenti viene marcata con uno 0. 
 Il risultato di questa traduzione diventa in questo caso la parola di 64 bit: 00000000 11111111 00000000 00000000 00000000
@@ -68,15 +68,15 @@ di che tipo e colore il pezzo è, mentre le bitboards solitamente mantengono set
 
 
 \subsection{Rappresentazione della scacchiera Casellocentrica}
-La rappresentazione casellocentrica  mantiene un associazione inversa rispetto a quella pezzocentrica,
+La rappresentazione casellocentrica  mantiene un'associazione inversa rispetto a quella pezzocentrica:
 per ogni casella conserviamo in memoria se è vuota o occupata da un pezzo in particolare.
 La macro-categoria di  rappresentazione più comune è la Mailbox:
 
 \subsubsection{Mailbox}
 La rappresentazione Mailbox è una rappresentazione casellocentrica dove la codifica di ogni casella risiede in una struttura dati
-che permette l'accesso casuale, solitamente si utilizza un array con l'indice che codifica dal numero della casella in array monodimensionali
-o dalla coppia traversa/colonna\footnote{termini scacchistici per indicare le righe e le colonne della scacchiera} in array bidimensionali.
-Il nome deriva dall'associazione di ogni indice al concetto di "indirizzo" di una casella postale.Le implementazioni più famose e
+che permette l'accesso casuale. Solitamente si utilizza un array con l'indice che codifica dal numero della casella in array monodimensionali
+o dalla coppia traversa/colonna\footnote{Termini scacchistici per indicare le righe e le colonne della scacchiera.} in array bidimensionali.
+Il nome deriva dall'associazione di ogni indice al concetto di "indirizzo" di una casella postale. Le implementazioni più famose e
 comuni del concetto di Mailbox sono la 8x8 Board e la 10x12 Board.
 
 \subsubsection{8x8 Board}
@@ -87,13 +87,13 @@ Questo tipo di rappresentazione è usata spesso come rappresentazione ridondante
 per individuare se e quali pezzi sono presenti su una casella in maniera efficiente.
 
 \subsubsection{10x12 Board}
-Una board 10x12 visibile nella figura \ref{10x12} contorna una board 8x8 con traverse e colonne sentinelle per individuare indici al di fuori della scacchiera durante la generazione delle mosse, anche questo tipo di board 
+Una board 10x12 visibile nella figura \ref{10x12} contorna una board 8x8 con traverse e colonne sentinelle per individuare indici al di fuori della scacchiera durante la generazione delle mosse. Anche questo tipo di board, 
 come la 8x8 di cui è un derivativo, può essere usata per accedere in maniera efficiente e facile per un programmatore umano a specifiche caselle della scacchiera per individuare o meno la presenza di pezzi.
 \vfill
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth/2]{10x12 board.png}
-    \caption{Rappresentazione di una board 10x12,notare come le 2 traverse extra sopra e sotto siano necessarie per evitare accessi out of bounds in caso di cavalli posizionati sulla prima o ottava fila }
+    \caption{Rappresentazione di una board 10x12; notare come le 2 traverse extra sopra e sotto siano necessarie per evitare accessi out of bounds in caso di cavalli posizionati sulla prima o ottava fila. }
     \label{10x12}
 \end{figure}
 
@@ -102,10 +102,10 @@ come la 8x8 di cui è un derivativo, può essere usata per accedere in maniera e
 \subsubsection{Rappresentazione dei pezzi}
 Una volta scelto il tipo di rappresentazione della scacchiera si può iniziare a pensare alla rappresentazione dei pezzi.
 \\Anche se può sembrare controintuitivo i pezzi non hanno bisogno di una struttura elaborata, in quanto la generazione delle possibili
-mosse verrà gestita in una funzione di move generation, trattata nel paragrafo \ref{move generation}, ed il loro spostamento all'interno della scacchiera verrà gestito da una funzione indipendente, in grado di distinguere autonomamente i pezzi, solitamente chiamata
-MakeMove. Per i pezzi quindi abbiamo bisogno di una
+mosse verrà gestita in una funzione di move generation, trattata nel paragrafo \ref{move generation}, che gestirà in maniera autonoma la logica necessaria ed il loro spostamento all'interno della scacchiera verrà gestito da una funzione indipendente, in grado di distinguere autonomamente i pezzi, solitamente chiamata
+MakeMove. Per i pezzi, quindi, abbiamo bisogno di una
 rappresentazione semplice, di facile interpretazione e che occupi poco spazio.\\Rappresentazioni molto comuni sono quella
-tramite interi, dove ad ogni tipo di pezzo viene assegnato un numero che funge da identificativo univoco e quella tramite
+tramite interi, dove ad ogni tipo di pezzo viene assegnato un numero che funge da identificativo univoco, e quella tramite
 caratteri, dove ad ogni tipo di pezzo viene assegnato un carattere che lo identifica (e che in linguaggi come il C è funzionalmente identica a quella per interi).
 
 
@@ -113,15 +113,15 @@ caratteri, dove ad ogni tipo di pezzo viene assegnato un carattere che lo identi
 \label{move generation} %\label{1cap:spinta_laterale}
 % [titolo ridotto se non ci dovesse stare] {titolo completo}
 %
-Una volta stabilito il tipo di rappresentazione il passo successivo è quello della generazione delle mosse, per generazione delle mosse si intende la generazione
-di tutte le mosse legali eseguibili data una posizione di partenza, la generazione delle mosse è un processo fondamentale in quanto identifica i rami che
+Una volta stabilito il tipo di rappresentazione il passo successivo è quello della generazione delle mosse. Per generazione delle mosse si intende la generazione
+di tutte le mosse legali eseguibili data una posizione di partenza ed è un processo fondamentale in quanto identifica i rami che
 il nostro algoritmo potrà esplorare nella successiva fase, quella appunto di ricerca, trattata nel paragrafo \ref{ricerca}.
 
 
 
 \subsection{Approcci alla generazione delle mosse}
-La generazione delle mosse viene affrontata con 3 approcci radicalmente diversi a seconda del tipo di pezzo che stiamo trattando, in particolare la distinzione si effettua tra 
-pedoni,pezzi scorrevoli (alfieri,torri,regine) e non scorrevoli(re e cavalli).
+La generazione delle mosse viene affrontata con 3 approcci radicalmente diversi a seconda del tipo di pezzo che stiamo trattando. In particolare, la distinzione si effettua tra 
+pedoni, pezzi scorrevoli (alfieri, torri, regine) e non scorrevoli (re e cavalli).
 
 \subsubsection{Pedoni}
 Il pedone muove solo in avanti, mai indietro o di lato e può avanzare  di due caselle se è la prima volta che viene mosso,altrimenti può avanzare solo di una.
