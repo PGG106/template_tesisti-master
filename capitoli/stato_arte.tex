@@ -3,42 +3,42 @@
 %
 
 \begin{citazione}
-Questo capitolo illustra lo stato dell'arte e i lavori presenti in letteratura sui motori scacchistici
+Questo capitolo illustra lo stato dell'arte e i lavori presenti in letteratura sui motori scacchistici.
 \end{citazione}
 
 \newpage
 
 
 \section{Stockfish pre rete neurale }
-Prima della rivoluzione dei motori scacchistici favoreggiata dall'introduzione di reti neurali nel processo di valutazione di una posizione, che vedremo in seguito,lo stato dell'arte era rappresentato
-da una decina di motori con funzioni di valutazione HCE,tra questi è difficile trovare un rappresentante migliore di Stockfish, uno dei motori scacchistici più vincenti di sempre e frutto di un progetto
+Prima della rivoluzione dei motori scacchistici, favoreggiata dall'introduzione di reti neurali nel processo di valutazione di una posizione che vedremo in seguito, lo stato dell'arte era rappresentato
+da una decina di motori con funzioni di valutazione HCE. Tra questi è difficile trovare un rappresentante migliore di Stockfish, uno dei motori scacchistici più vincenti di sempre e frutto di un progetto
 open source che va ormai avanti da decenni.
 \subsection{Struttura interna}
-Per la rappresentazione della scacchiera Stockfish non offre sorprese particolari,utilizza un misto di bitboard e board 8x8 per la rappresentazione dei pezzi ed opta per l'utilizzo di bitboard pext
-o magiche per la generazione delle mosse.\\La ricerca nelle sue basi è una ricerca di tipo alfa-beta con approfondimento iterativo come già visto in precedenza,vi è anche la presenza di quelle 
+Per la rappresentazione della scacchiera Stockfish non offre sorprese particolari, utilizza un misto di bitboard e board 8x8 per la rappresentazione dei pezzi ed opta per l'utilizzo di bitboard pext
+o magiche per la generazione delle mosse.\\La ricerca è tipo alfa-beta con approfondimento iterativo come già visto in precedenza; vi è anche la presenza di quelle 
 aggiunte alla ricerca minimax che in questo campo risultano essere fondamentali, come una tabella di trasposizione e varie euristiche di ordinamento della mossa.\\La vera grande differenza
-tra Stockfish ed un motore hobbystico per quanto riguarda la ricerca è l'implementazione di un algoritmo di ricerca multi-thread,si tratta di una versione dell'algoritmo molto complessa in quanto deve
-gestire tutti i problemi classici della concorrenza ed in più assicurarsi che il lavoro parallelo dei thread abbia un effetto costruttivo e non distruttivo, in particolare Stockfish implementa l'algoritmo di 
+tra Stockfish ed un motore hobbystico per quanto riguarda la ricerca è l'implementazione di un algoritmo di ricerca multi-thread: si tratta di una versione dell'algoritmo molto complessa in quanto deve
+gestire tutti i problemi classici della concorrenza ed in più assicurarsi che il lavoro parallelo dei thread abbia un effetto costruttivo e non distruttivo. In particolare, Stockfish implementa l'algoritmo di 
 ricerca parallelo chiamato Lazy SMP, nel quale vengono fatte partire diverse ricerche (una per thread) a partire dallo stesso nodo sorgente ma con differenti variabili di ricerca (profondità massime diverse, pesi 
 diversi per l'ordinamento delle mosse o per la potatura) ed i risultati vengono conservati in una tabella hash comune a tutte le istanze di ricerca, che possono quindi utilizzare i risultati delle altre per 
-auto-guidarsi.Infine, per quanto riguarda la parte di valutazione, ossia quella più complessa e delicata, va detto che non esiste un modo per descrivere brevemente le sottili ed intricate scelte all'interno 
-della funzione, in particolare per quanto riguarda i pesi utilizzati dalla funzione obbiettivo, ci basti sapere che a questo punto della storia (pre fine 2017) Stockfish è mosso da una funzione di valutazione 
+auto-guidarsi. Infine, per quanto riguarda la parte di valutazione, ossia quella più complessa e delicata, va detto che non esiste un modo per descrivere brevemente le sottili ed intricate scelte all'interno 
+della funzione. In particolare, per quanto riguarda i pesi utilizzati dalla funzione obbiettivo, ci basti sapere che a questo punto della storia (pre fine 2017) Stockfish è mosso da una funzione di valutazione 
 di tipo HCE, che coinvolge diverse euristiche di tipo scacchistico e centinaia di pesi calibrati a mano dopo milioni e milioni di test di regressione.
 
 
 \section{AlphaZero}
-Alla fine dell'anno 2017 un controverso paper\cite{DBLP:journals/corr/abs-1712-01815} da parte del team di Google DeepMind, apre un nuovo spiraglio di possibilità nel mondo degli scacchi computazionali,
-in questo paper infatti viene presentato un motore chiamato AlphaZero, sprovvisto di una funzione di valutazione HCE, fin ora standard praticamente unico del mondo scacchistico, questo motore,complice anche l'enorme 
-potenza dei cluster di calcolatori di google, fu un grado di partire dalle sole basi del gioco degli scacchi,senza nessuna conoscenza posizionale fornita esternamente, ed in 4 ore auto-migliorarsi al punto 
+Alla fine dell'anno 2017 un controverso paper\cite{DBLP:journals/corr/abs-1712-01815} da parte del team di Google DeepMind, apre un nuovo spiraglio di possibilità nel mondo degli scacchi computazionali. In questo paper, infatti, viene presentato un motore chiamato AlphaZero, sprovvisto di una funzione di valutazione HCE, fin ora standard praticamente unico del mondo scacchistico. ù
+Questo motore, complice anche l'enorme 
+potenza dei cluster di calcolatori di Google, fu in grado di partire dalle sole basi del gioco degli scacchi, senza nessuna conoscenza posizionale fornita esternamente, ed in 4 ore auto-migliorarsi al punto 
 da competere e riuscire a vincere in maniera convincente contro la versione di Stockfish dell'anno precedente ma con un approccio da parte del team di ricerca non esente da critiche\cite{chess.com}.
 
 
 
-\section{Stockfish-NNUE e LCZero}
-Nonostante le critiche ed i dubbi sulla performance di AlphaZero, gli appassionati di scacchi computazionali non rimasero impassibili davanti ai meriti di un approccio orientato alle reti neurali,
-il 6 agosto del 2020, un anno e mezzo dopo la pubblicazione definitiva dell'articolo su AlphaZero da parte di DeepMind e dopo un anno di lavoro, viene ufficialmente introdotta ,all'interno della repo di Stockfish,NNUE.
+\section{Stockfish-NNUE}
+Nonostante le critiche ed i dubbi sulla performance di AlphaZero, gli appassionati di scacchi computazionali non rimasero impassibili davanti ai meriti di un approccio orientato alle reti neurali.
+Il 6 agosto del 2020, un anno e mezzo dopo la pubblicazione definitiva dell'articolo su AlphaZero da parte di DeepMind e dopo un anno di lavoro, viene ufficialmente introdotta, all'interno della repo di Stockfish, NNUE.
 \\NNUE, acronimo di "Effeciently Upgradable Neural Network" scritto da sinistra a destra, è una rete neurale per la valutazione di posizioni shogi, alle quali assegna un punteggio
 utilizzato poi in fase di potatura, adattata per operare sugli scacchi ed essere integrata in Stockfish.
-In questa nuova versione Stockfish, chiamato da questo momento in poi anche Stockfish+NNUE, mantiene le caratteristiche principali che contraddistinguono la sua versione precedente, e la valutazione NNUE viene
-utilizzata in tutte le posizioni materialmente bilanciate.In totale il guadagno di Stockfish dopo il passaggio a NNUE è stato stimato nel range di 80-100 punti ELO.
+In questa nuova versione Stockfish, chiamato da questo momento in poi anche Stockfish+NNUE, mantiene le caratteristiche principali che contraddistinguono la sua versione precedente e la valutazione NNUE viene
+utilizzata in tutte le posizioni materialmente bilanciate. In totale il guadagno di Stockfish dopo il passaggio a NNUE è stato stimato nel range di 80-100 punti ELO.
 
