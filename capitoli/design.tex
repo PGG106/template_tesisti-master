@@ -352,7 +352,7 @@ la posizione finale vedrà in ogni caso un pedone bianco su a4 e su d4 ed un ped
 \\ Una \textbf{tabella di trasposizione} è una tabella hash che conserva i risultati di ricerche precedentemente effettuate
 su una data posizione e ogni volta che si raggiunge una nuova posizione (per l'iterazione locale del processo di ricerca) , si cerca all'interno di questa tavola dei risultati precedenti associati a tale posizione; in caso di riscontro positivo
 vengono prelevati i dati risalenti all'ultima ricerca effettuata, spesso composti da posizione, profondità e punteggio finale della ricerca.
-\\Per individuare una posizione all'interno della tabella si utilizza una chiave hash in grado di codificare univocamente una posizione su una scacchiera. Per la generazione di queste chiavi una tecnica molto diffusa prende il nome di hashing zobrist. 
+\\Per individuare una posizione all'interno della tabella si utilizza una chiave hash in grado di codificare univocamente una posizione su una scacchiera. Per la generazione di queste chiavi una tecnica molto diffusa prende il nome di \textbf{hashing zobrist}.
 Nell'hashing zobrist si assegna una chiave casuale di 64 bit ad ogni combinazione pezzo-posizione, ad ogni possibile insieme di permessi di arrocco, ad ogni possibile casella di en passant ed ai due lati di gioco possibili (bianco e nero).
 Si parte poi da una chiave vuota e man mano vengono inseriti, tramite XOR bit a bit, le chiavi dei pezzi presenti sulla scacchiera corrispondenti alle posizioni in cui si trovano, degli attuali permessi di arrocco
 del lato giocante e dell'eventuale casella di enpassant. Data però l'impossibilità di contenere tutte le possibili chiavi all'interno di una tabella hash, si utilizzano metodi per ridurre l'universo delle chiavi,
