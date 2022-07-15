@@ -2,11 +2,6 @@
 % [titolo ridotto se non ci dovesse stare] {titolo completo}
 %
 
-\begin{citazione}
-    In questo capitolo vengono illustrate tutte le componenti principali di un motore scacchistico e vengono discussi gli approcci alla realizzazione delle stesse.
-\end{citazione}
-
-\newpage
 \section{Rappresentazione della scacchiera e dei pezzi}
 
 \subsection{Introduzione} %\label{1sec:scopo}
@@ -398,7 +393,6 @@ ed in quanto tale va evitata se non porta a vantaggi sostanziali. Spesso, quindi
 Un pedone isolato è un pedone che nel corso della partita rimane senza pedoni sulle due colonne adiacenti; si tratta, quindi, di un pedone che non può essere difeso dai pedoni adiacenti e quindi di un pezzo
 facilmente attaccabile per l'avversario e per questo è prassi assegnare ad ogni pedone isolato un malus di punteggio.
 In termini pratici una realizzazione tipica di questa euristica si basa sulla generazione di bitmask statiche che in combinazione con la bitboard dei pedoni saranno in grado di identificare queste tipologie di pedoni.
-
 
 
 \section {Libro delle aperture e Tablebase}
