@@ -1,3 +1,25 @@
 \chapter{Conclusioni e Sviluppi Futuri} %\label{1cap:spinta_laterale}
 % [titolo ridotto se non ci dovesse stare] {titolo completo}
 %
+
+
+In conclusione si può dire di aver effettuato una panoramica completa seppur basilare della struttura di un motore scacchistico.
+Diversi algoritmi "storici" sono stati riproposti e ri-analizzati, mostrando la loro efficacia ed il motivo per cui sono diventati fondamentali ed è stata fornita la base ottimale per un motore di medio livello.\\
+Infine, si elencano delle potenziali migliorie in grado di elevare un motore progettato seguendo questa
+tesi da un motore amatoriale di medio livello ad un motore in grado di competere con i migliori al mondo.
+\begin{itemize}
+    \item \textbf{NNUE:} Una funzione di valutazione basata su NNUE è in grado, con un investimento temporale 
+    molto breve, di battere anche le migliori funzioni di valutazione tradizionali. Per un motore 
+    non particolarmente forte il passaggio a NNUE può comportare un guadagno di svariate centinaia di 
+    punti elo.
+    \item \textbf{Introduzione di ulteriori euristiche di ricerca:} Le euristiche di ricerca per un motore
+    scacchistico sono numerose e nella tesi vengono trattate solo le principali, scavando più affondo
+    nel mondo degli algoritmi di ricerca è possibile guadagnare diverse centinaia di punti elo.
+    \item \textbf{Tuning del motore}: Un'altro fattore importante 
+    nello sviluppo di un motore scacchistico consiste nel tuning dei suoi iperparametri, si tratta di un processo nel quale attraverso 
+    molteplici iterazioni e campionamenti statistici si cerca il valore ottimale di ogni costante che detta il comportamento del motore.
+    I guadagni attesi dal tuning di un motore dipendono dalla sub ottimalità dei parametri iniziali ma si aggirano solitamente sui 50-100 elo.
+\end{itemize}
+È possibile visualizzare un esempio pratico di alcune di queste migliorie e seguire lo sviluppo attivo di 
+un motore scacchistico nella repository github del motore associato a questa tesi,
+{\href{https://github.com/PGG106/Alexandria}{Alexandria}}.
